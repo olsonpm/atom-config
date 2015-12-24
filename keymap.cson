@@ -1,7 +1,25 @@
+'.platform-win32 atom-text-editor, .platform-linux atom-text-editor':
+  'ctrl-u': 'editor:delete-to-beginning-of-line'
+
+'body':
+  'ctrl-o': 'fuzzy-finder:toggle-file-finder'
+  'ctrl-shift-n': 'unset!'
+
+'body .native-key-bindings':
+  'alt-up': 'unset!'
+  'alt-left': 'unset!'
+  'alt-down': 'unset!'
+  'alt-right': 'unset!'
+
+'atom-workspace atom-text-editor':
+  'alt-left': 'last-cursor-position:previous'
+  'alt-right': 'last-cursor-position:next'
+
 'atom-text-editor':
   'ctrl-left': 'editor:move-to-beginning-of-word'
   'ctrl-shift-left': 'editor:select-to-beginning-of-word'
   'ctrl-right': 'editor:move-to-end-of-word'
+  'fn-right': 'editor:move-to-end-of-line'
   'ctrl-shift-right': 'editor:select-to-end-of-word'
   'ctrl-end': 'core:move-to-bottom'
   'ctrl-shift-end': 'core:select-to-bottom'
@@ -12,7 +30,6 @@
   'ctrl-shift-pageup': 'pane:move-item-left'
   'ctrl-shift-pagedown': 'pane:move-item-right'
   'ctrl-k': 'editor:delete-line'
-  'ctrl-u': 'editor:delete-to-beginning-of-line'
   'ctrl-i': 'editor:delete-to-end-of-line'
   'ctrl-s': 'core:save'
   'ctrl-/': 'editor:toggle-line-comments'
@@ -20,14 +37,12 @@
   'ctrl-shift-b': 'bracket-matcher:select-inside-brackets'
   'ctrl-f': 'find-and-replace:show'
   'alt-t': 'tree-view:reveal-active-file'
-  'ctrl-o': 'fuzzy-finder:toggle-file-finder'
   'ctrl-shift-f': 'project-find:show'
   'ctrl-shift-t': 'pane:reopen-closed-item'
   'ctrl-delete': 'editor:delete-to-end-of-word'
   'alt-c': 'color-picker:open'
   'ctrl-r': 'command-palette:toggle'
   'ctrl-d': 'symbols-view:go-to-declaration'
-  'alt-left': 'last-cursor-position:previous'
   'alt-right': 'last-cursor-position:next'
   'alt-s': 'symbols-view:toggle-project-symbols'
   'alt-w': 'hard-wrap:reflow-selection'
@@ -42,6 +57,8 @@
   'ctrl-shift-m': 'xml-formatter:indent'
   'ctrl-a': 'core:select-all'
   'shift-ctrl-s': 'core:save-as'
+  'ctrl-shift-j': 'jshint:go-to-error'
+  'ctrl-shift-n': 'jshint:go-to-next-error'
   # Remove default keybindings
   'ctrl-k up': 'unset!'
   'ctrl-k right': 'unset!'
@@ -74,5 +91,5 @@
   'alt-t': 'tree-view:toggle'
 
 '.platform-darwin atom-text-editor':
-  'ctrl-backspace'  : 'editor:delete-to-beginning-of-word'
+  'ctrl-backspace': 'editor:delete-to-beginning-of-word'
   'ctrl-t': 'application:new-file'

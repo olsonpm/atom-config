@@ -1,42 +1,89 @@
+@default-font-color: #111;
+@default-font-color-lighter: #666;
+@selected-highlight-color: #D4D4D4;
+@current-line-color: #e9e9e9;
+@purple: #750a74;
+@green: #004f00;
+@puke: #7e5600;
+@red: #9e0d00;
+@error-red: #ffddda;
+@blue: #092a75;
+@general-highlight: rgba(255, 229, 0, 0.5);
+
 atom-text-editor {
   font-size: 16px;
   background-color: #f9f9f9;
+  color: @default-font-color;
 
   &::shadow {
-    .keyword.control
-     , .entity.other.attribute-name {
-      color: #111;
+    .bracket-matcher .region {
+      background-color: @general-highlight;
+      z-index: 100;
     }
 
-    .string {
-      color: #114411;
+    .keyword.control
+     , .entity.other.attribute-name {
+      color: @default-font-color;
     }
+
+    .invalid.illegal {
+      color: @default-font-color !important;
+      background-color: @error-red !important;
+    }
+    
+    .string
+     , .markup.raw {
+      color: @green;
+    }
+
+    .source.gfm .markup.heading
+     , .variable
+     , .source.json .meta.structure.dictionary.json > .string.quoted.json {
+      color: @red;
+    }
+
     .constant
-     , .source.css .property-value {
-      color: #6B4900;
+     , .source.css .property-value
+     , .support.class
+     , .entity.name.type {
+      color: @puke;
     }
-    .source.css .property-name.support {
-      color: #751E74;
+
+    .source.css .property-name.support
+     , .source.gfm .markup.link
+     , .storage {
+      color: @purple;
     }
-    .comment {
-      color: #666;
+
+    .source.gfm .link .entity
+     , .support.function
+     , .source.json .meta.structure.dictionary.json > .constant.language.json, .source.json .meta.structure.array.json > .constant.language.json
+     , .constant.character.escape
+     , .source.json .meta.structure.dictionary.json > .value.json > .string.quoted.json, .source.json .meta.structure.array.json > .value.json > .string.quoted.json, .source.json .meta.structure.dictionary.json > .value.json > .string.quoted.json > .punctuation, .source.json .meta.structure.array.json > .value.json > .string.quoted.json > .punctuation
+     , .entity.name.function {
+      color: @blue;
+    }
+
+    .punctuation.definition.comment
+     , .comment {
+      color: @default-font-color-lighter;
       font-style: normal;
     }
 
     .selection .region {
-      background-color: #D4D4D4;
+      background-color: @selected-highlight-color;
     }
 
     .line-number {
-      color: #666;
+      color: @default-font-color-lighter;
 
       &.cursor-line {
-        color: #111;
+        color: @default-font-color;
         font-weight: bold;
       }
     }
     .cursor-line {
-      background-color: #e9e9e9;
+      background-color: @current-line-color;
     }
   }
 }
