@@ -1,7 +1,5 @@
 @default-font-color: #111;
 @default-font-color-lighter: #666;
-@selected-highlight-color: #D4D4D4;
-@current-line-color: #e9e9e9;
 @purple: #750a74;
 @green: #004f00;
 @puke: #7e5600;
@@ -9,6 +7,9 @@
 @error-red: #ffddda;
 @blue: #092a75;
 @general-highlight: rgba(255, 229, 0, 0.5);
+@bg: white;
+@bg-dark-1: #e9e9e9;
+@bg-dark-2: #ccc;
 
 atom-text-editor {
   font-size: 16px;
@@ -21,8 +22,8 @@ atom-text-editor {
       z-index: 100;
     }
 
-    .keyword.control
-     , .entity.other.attribute-name {
+    .entity.other.attribute-name
+     , .constant {
       color: @default-font-color;
     }
 
@@ -30,7 +31,7 @@ atom-text-editor {
       color: @default-font-color !important;
       background-color: @error-red !important;
     }
-    
+
     .string
      , .markup.raw {
       color: @green;
@@ -38,12 +39,12 @@ atom-text-editor {
 
     .source.gfm .markup.heading
      , .variable
+     , .keyword
      , .source.json .meta.structure.dictionary.json > .string.quoted.json {
       color: @red;
     }
 
-    .constant
-     , .source.css .property-value
+    .source.css .property-value
      , .support.class
      , .entity.name.type {
       color: @puke;
@@ -71,7 +72,7 @@ atom-text-editor {
     }
 
     .selection .region {
-      background-color: @selected-highlight-color;
+      background-color: @bg-dark-2;
     }
 
     .line-number {
@@ -83,9 +84,55 @@ atom-text-editor {
       }
     }
     .cursor-line {
-      background-color: @current-line-color;
+      background-color: @bg-dark-1;
     }
   }
+}
+
+.tree-view.list-tree li.selected:before
+ , .tree-view.list-tree li:not(.list-nested-item).selected:before
+ , .tree-view.list-tree li.list-nested-item.selected > .list-item:before
+ , .tree-view.list-tree:focus li.selected:before
+ , .tree-view.list-tree:focus li:not(.list-nested-item).selected:before
+ , .tree-view.list-tree:focus li.list-nested-item.selected > .list-item:before {
+
+  color: @default-font-color;
+  background-color: @bg;
+}
+
+.tree-view.list-tree li li:not(.list-nested-item):hover
+ , .tree-view.list-tree li li.list-nested-item > .list-item:hover
+ , .tree-view.list-tree li.selected:hover:before
+ , .tree-view.list-tree li:not(.list-nested-item).selected:hover:before
+ , .tree-view.list-tree li.list-nested-item.selected > .list-item:hover:before
+ , .tree-view.list-tree:focus li.selected:hover:before
+ , .tree-view.list-tree:focus li:not(.list-nested-item).selected:hover:before
+ , .tree-view.list-tree:focus li.list-nested-item.selected > .list-item:hover:before {
+
+  color: @default-font-color !important;
+  background-color: @bg-dark-2 !important;
+}
+
+
+.tree-view.list-tree li li.status-added
+ , .tree-view.list-tree li li:not(.list-nested-item).status-added
+ , .tree-view.list-tree li li.list-nested-item.status-added > .list-item {
+
+   color: @green;
+}
+
+.tree-view.list-tree li li.status-modified
+ , .tree-view.list-tree li li:not(.list-nested-item).status-modified
+ , .tree-view.list-tree li li.list-nested-item.status-modified > .list-item {
+
+   color: @puke;
+}
+
+.tree-view.list-tree li
+ , .tree-view.list-tree li:not(.list-nested-item)
+ , .tree-view.list-tree li.list-nested-item > .list-item {
+
+   color: @purple;
 }
 
 html, body {
