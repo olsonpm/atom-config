@@ -1,3 +1,5 @@
+'use strict';
+
 atom.commands.add('atom-text-editor', 'personal:doc-curline', function() {
   const editor = atom.workspace.getActiveTextEditor()
     , row = editor.getCursorBufferPosition().row;
@@ -12,7 +14,6 @@ atom.commands.add('atom-text-editor', 'personal:doc-export', function() { doc('E
 atom.commands.add('atom-text-editor', 'personal:doc-main', function() { doc('Main'); });
 atom.commands.add('atom-text-editor', 'personal:doc-init', function() { doc('Init'); });
 atom.commands.add('atom-text-editor', 'personal:doc-helper', function() { doc('Helper Fxns'); });
-
 
 
 //-------------//

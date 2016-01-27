@@ -1,12 +1,13 @@
-'.platform-win32 atom-text-editor, .platform-linux atom-text-editor':
+'.platform-linux atom-text-editor, .platform-win32 atom-text-editor, atom-text-editor':
   'ctrl-u': 'editor:delete-to-beginning-of-line'
 
-'.platform-win32 .find-and-replace, .platform-linux .find-and-replace':
+'.platform-linux .find-and-replace, .platform-win32 .find-and-replace, .find-and-replace':
   'ctrl-alt-s': 'unset!'
 
 'body':
   'ctrl-o': 'fuzzy-finder:toggle-file-finder'
   'ctrl-shift-n': 'unset!'
+  'ctrl-alt-r': 'window:reload'
 
 'body .native-key-bindings':
   'alt-up': 'unset!'
@@ -55,7 +56,6 @@
   'shift-alt-f': 'find-and-replace:find-previous'
   'alt-a': 'find-and-replace:replace-all'
   'alt-r': 'find-and-replace:replace-next'
-  'alt-o': 'fuzzy-finder:toggle-buffer-finder'
   'f3': 'tern:definition'
   'ctrl-shift-m': 'xml-formatter:indent'
   'ctrl-a': 'core:select-all'
@@ -93,16 +93,19 @@
   'enter': 'tree-view:open-selected-entry'
   'alt-t': 'tree-view:toggle'
 
-'.platform-darwin atom-text-editor':
+'.platform-darwin atom-text-editor, atom-text-editor':
   'ctrl-backspace': 'editor:delete-to-beginning-of-word'
   'ctrl-t': 'application:new-file'
 
 'atom-text-editor:not(.mini)':
   'ctrl-shift-n': 'linter:next-error'
-  'ctrl-shift-p': 'linter:previous-error'
+  'f5': 'script:run'
 
-'.platform-linux, .platform-linux .command-palette atom-text-editor':
-  'ctrl-shift-p': 'unset!'
+'.platform-linux .command-palette atom-text-editor, .platform-linux, atom-text-editor, body':
+  'ctrl-shift-p': 'linter:previous-error'
 
 'atom-workspace atom-text-editor:not([mini])':
   'ctrl-shift-d': 'personal:doc-curline'
+
+'.platform-darwin atom-text-editor':
+  'alt-o': 'fuzzy-finder:toggle-buffer-finder'
