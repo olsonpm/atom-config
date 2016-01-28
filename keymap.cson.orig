@@ -7,7 +7,9 @@
 'body':
   'ctrl-o': 'fuzzy-finder:toggle-file-finder'
   'ctrl-shift-n': 'unset!'
+<<<<<<< Updated upstream
   'ctrl-alt-r': 'window:reload'
+=======
   'ctrl-k up': 'unset!'
   'ctrl-k right': 'unset!'
   'ctrl-k down': 'unset!'
@@ -16,6 +18,7 @@
 '.platform-win32, .platform-linux':
   'alt': 'abort!'
   'alt-f1': 'window:toggle-menu-bar'
+>>>>>>> Stashed changes
 
 'body .native-key-bindings':
   'alt-up': 'unset!'
@@ -130,9 +133,14 @@
 'atom-workspace atom-text-editor:not([mini])':
   'ctrl-shift-d': 'personal:doc-curline'
 
-'.platform-darwin atom-text-editor, .platform-linux atom-text-editor':
+<<<<<<< Updated upstream
+'.platform-darwin atom-text-editor':
+  'alt-o': 'fuzzy-finder:toggle-buffer-finder'
+=======
+'.platform-linux atom-text-editor':
   'alt-o': 'fuzzy-finder:toggle-buffer-finder'
 
 '.platform-win32 atom-text-editor, .platform-linux atom-text-editor':
   'ctrl-shift-b': 'unset!'
   'f5': 'script:run'
+>>>>>>> Stashed changes
