@@ -8,7 +8,7 @@ else
   echo "including styles"
 fi
 
-DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+DIR="$( cd "$( dirname "${0}" )/.." && pwd )"
 
 cp ~/.atom/keymap.cson ~/.atom/keymap.bak.cson 2>/dev/null
 cp ~/.atom/init.js ~/.atom/init.bak.js 2>/dev/null
