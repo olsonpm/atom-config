@@ -12,6 +12,14 @@
   'ctrl-k right': 'unset!'
   'ctrl-k down': 'unset!'
   'ctrl-k left': 'unset!'
+  'ctrl-k ctrl-alt-w': 'unset!'
+  'ctrl-k ctrl-up': 'unset!'
+  'ctrl-k ctrl-right': 'unset!'
+  'ctrl-k ctrl-down': 'unset!'
+  'ctrl-k ctrl-left': 'unset!'
+  'ctrl-k ctrl-n': 'unset!'
+  'ctrl-k ctrl-p': 'unset!'
+  'ctrl-k ctrl-w': 'unset!'
 
 '.platform-win32, .platform-linux':
   'alt': 'abort!'
@@ -26,6 +34,8 @@
 'atom-workspace atom-text-editor':
   'alt-left': 'last-cursor-position:previous'
   'alt-right': 'last-cursor-position:next'
+  'ctrl-k ctrl-l': 'unset!'
+  'ctrl-k ctrl-u': 'unset!'
 
 'atom-text-editor':
   'ctrl-left': 'editor:move-to-beginning-of-word'
@@ -53,7 +63,6 @@
   'ctrl-shift-t': 'pane:reopen-closed-item'
   'ctrl-delete': 'editor:delete-to-end-of-word'
   'alt-c': 'color-picker:open'
-  'ctrl-r': 'command-palette:toggle'
   'ctrl-d': 'symbols-view:go-to-declaration'
   'alt-right': 'last-cursor-position:next'
   'alt-s': 'symbols-view:toggle-project-symbols'
@@ -69,28 +78,6 @@
   'ctrl-a': 'core:select-all'
   'ctrl-shift-s': 'core:save-as'
   'ctrl-shift-d': 'personal:doc-curline'
-  # Remove default keybindings
-  'ctrl-k ctrl-0': 'unset!'
-  'ctrl-k ctrl-1': 'unset!'
-  'ctrl-k ctrl-2': 'unset!'
-  'ctrl-k ctrl-3': 'unset!'
-  'ctrl-k ctrl-4': 'unset!'
-  'ctrl-k ctrl-5': 'unset!'
-  'ctrl-k ctrl-6': 'unset!'
-  'ctrl-k ctrl-7': 'unset!'
-  'ctrl-k ctrl-8': 'unset!'
-  'ctrl-k ctrl-9': 'unset!'
-  'ctrl-k ctrl-d': 'unset!'
-  'ctrl-k ctrl-l': 'unset!'
-  'ctrl-k ctrl-n': 'unset!'
-  'ctrl-k ctrl-p': 'unset!'
-  'ctrl-k ctrl-u': 'unset!'
-  'ctrl-k ctrl-w': 'unset!'
-  'ctrl-k ctrl-up': 'unset!'
-  'ctrl-k ctrl-right': 'unset!'
-  'ctrl-k ctrl-down': 'unset!'
-  'ctrl-k ctrl-left': 'unset!'
-  'ctrl-k ctrl-alt-w': 'unset!'
 
 '.tree-view':
   'backspace': 'tree-view:remove'
@@ -108,31 +95,24 @@
 '.platform-linux .command-palette atom-text-editor, .platform-linux, atom-text-editor, body':
   'ctrl-shift-p': 'linter:previous-error'
 
-'.platform-linux, .platform-win32':
-  'ctrl-k d up': 'unset!'
-  'ctrl-k d right': 'unset!'
-  'ctrl-k d down': 'unset!'
-  'ctrl-k d left': 'unset!'
-  'ctrl-k up': 'unset!'
-  'ctrl-k right': 'unset!'
-  'ctrl-k down': 'unset!'
-  'ctrl-k left': 'unset!'
-  'ctrl-k m': 'unset!'
-  'ctrl-k m up': 'unset!'
-  'ctrl-k m right': 'unset!'
-  'ctrl-k m down': 'unset!'
-  'ctrl-k m left': 'unset!'
-  'ctrl-k n up': 'unset!'
-  'ctrl-k n right': 'unset!'
-  'ctrl-k n down': 'unset!'
-  'ctrl-k n left': 'unset!'
-
 'atom-workspace atom-text-editor:not([mini])':
   'ctrl-shift-d': 'personal:doc-curline'
+  'ctrl-k ctrl-0': 'unset!'
+  'ctrl-k ctrl-1': 'unset!'
+  'ctrl-k ctrl-2': 'unset!'
+  'ctrl-k ctrl-3': 'unset!'
+  'ctrl-k ctrl-4': 'unset!'
+  'ctrl-k ctrl-5': 'unset!'
+  'ctrl-k ctrl-6': 'unset!'
+  'ctrl-k ctrl-7': 'unset!'
+  'ctrl-k ctrl-8': 'unset!'
+  'ctrl-k ctrl-9': 'unset!'
 
 '.platform-darwin atom-text-editor, .platform-linux atom-text-editor':
   'alt-o': 'fuzzy-finder:toggle-buffer-finder'
+  'ctrl-r': 'command-palette:toggle'
 
 '.platform-win32 atom-text-editor, .platform-linux atom-text-editor':
-  'ctrl-shift-b': 'unset!'
   'f5': 'script:run'
+  'ctrl-shift-b': 'unset!'
+  'ctrl-k ctrl-d': 'unset!'
