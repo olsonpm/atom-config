@@ -1,9 +1,19 @@
 "*":
+  "atom-beautify":
+    _analyticsUserId: "efe889f6-0e0b-409b-8fd6-0857d2f5824a"
+  "bracket-matcher":
+    autocompleteBrackets: false
+    autocompleteSmartQuotes: false
   core:
+    packagesWithKeymapsDisabled: [
+      "ctrl-dir-scroll"
+      "bracket-matcher"
+    ]
     themes: [
       "isotope-light-ui"
       "one-light-syntax"
     ]
+  "ctrl-dir-scroll": {}
   editor:
     fontFamily: "\"DejaVu Sans Mono\""
     invisibles: {}
