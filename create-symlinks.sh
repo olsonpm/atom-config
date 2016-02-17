@@ -10,10 +10,13 @@ fi
 
 DIR="$( cd "$( dirname "${0}" )" && pwd )"
 
+cp ~/.atom/config.cson ~/.atom/config.bak.cson 2>/dev/null
 cp ~/.atom/keymap.cson ~/.atom/keymap.bak.cson 2>/dev/null
 cp ~/.atom/init.js ~/.atom/init.bak.js 2>/dev/null
+rm -rf ~/.atom/config.cson
 rm -rf ~/.atom/keymap.cson
 rm -rf ~/.atom/init.js
+ln -s "${DIR}"/config.cson ~/.atom/config.cson
 ln -s "${DIR}"/keymap.cson ~/.atom/keymap.cson
 ln -s "${DIR}"/init.js ~/.atom/init.js
 

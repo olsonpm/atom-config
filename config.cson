@@ -1,0 +1,15 @@
+"*":
+  core:
+    themes: [
+      "isotope-light-ui"
+      "one-light-syntax"
+    ]
+  editor:
+    fontFamily: "\"DejaVu Sans Mono\""
+    invisibles: {}
+  "exception-reporting":
+    userId: "c34d39d1-3389-aac6-9341-3ae92ea11f63"
+  pigments:
+    markerType: "dot"
+  welcome:
+    showOnStartup: false
