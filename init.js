@@ -5,7 +5,8 @@
 // Imports //
 //---------//
 
-const path = require('path');
+const path = require('path')
+  , fp = require('lodash/fp');
 
 
 //------//
@@ -19,6 +20,13 @@ atom.commands.add('atom-text-editor', 'personal:doc-curline', function() {
   doc(editor.lineTextForBufferRow(row));
   editor.insertText('\n');
   editor.moveUp(1);
+});
+
+atom.commands.add('atom-text-editor', 'personal:toKebabCase', function() {
+  const editor = atom.workspace.getActiveTextEditor()
+    , selected = editor.getSelectedText();
+
+  editor.insertText(fp.kebabCase(selected));
 });
 
 atom.commands.add('atom-text-editor', 'personal:doc-import', function() {
@@ -46,12 +54,15 @@ function doc(str) {
   const editor = atom.workspace.getActiveTextEditor();
 
   // validate
-  let commentStr;
-  if (!editor.buffer || !editor.buffer.file) {
+  let commentStr
+    , buf = editor.getBuffer()
+    , filePath = fp.invoke('getPath', buf);
+
+  if (!filePath) {
     return;
   }
 
-  let fileExt = path.extname(editor.buffer.file.path).slice(1);
+  let fileExt = path.extname(filePath).slice(1);
   if (!fileExt) {
     let firstLine = editor.lineTextForBufferRow(0);
     if (firstLine.match(/^#!.*(|ba|z)sh$/)) {
@@ -65,6 +76,7 @@ function doc(str) {
       break;
 
     case 'js':
+    case 'scss':
       commentStr = '//';
       break;
 
@@ -73,38 +85,9 @@ function doc(str) {
   }
 
   const textLength = str.length
-    , border = commentStr + repeat('-', textLength + 2) + commentStr + '\n'
+    , border = commentStr + fp.repeat(textLength + 2, '-') + commentStr + '\n'
     , out = border + commentStr + ' ' + str + ' ' + commentStr + '\n' + border + "\n";
 
   editor.deleteLine();
   editor.insertText(out);
 }
-
-function repeat(str, num) {
-  if (typeof str !== 'string') {
-    throw new TypeError('repeat-string expects a string.');
-  }
-
-  if (num === 1) return str;
-  if (num === 2) return str + str;
-
-  var max = str.length * num;
-  if (cache !== str || typeof cache === 'undefined') {
-    cache = str;
-    res = '';
-  }
-
-  while (max > res.length && num > 0) {
-    if (num & 1) {
-      res += str;
-    }
-
-    num >>= 1;
-    if (!num) break;
-    str += str;
-  }
-
-  return res.substr(0, max);
-}
-var res = '';
-var cache;

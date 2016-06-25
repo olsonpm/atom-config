@@ -1,13 +1,30 @@
 "*":
   "atom-beautify":
-    _analyticsUserId: "efe889f6-0e0b-409b-8fd6-0857d2f5824a"
+    general:
+      _analyticsUserId: "341af4ba-5046-42fa-a28a-7d3011575b2b"
+  "autocomplete-plus":
+    enableAutoActivation: false
+    includeCompletionsFromAllBuffers: false
   "bracket-matcher":
     autocompleteBrackets: false
     autocompleteSmartQuotes: false
   core:
+    PATH: "/home/phil/.lilyvm/bin:/home/phil/.gem/ruby/2.3.0/bin:/home/phil/.nvm/versions/node/v6.0.0/bin:/home/phil/bin:/home/phil/.govm/versions/current/bin:/home/phil/.pyenv/plugins/pyenv-virtualenv/shims:/home/phil/.pyenv/shims:/home/phil/.pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
+    allowPendingPaneItems: false
+    disabledPackages: [
+      "git-diff"
+      "language-git"
+      "open-on-github"
+    ]
+    ignoredNames: [
+      "node_modules"
+    ]
     packagesWithKeymapsDisabled: [
       "ctrl-dir-scroll"
       "bracket-matcher"
+      "tree-view"
+      "save-autorun"
+      "hard-wrap"
     ]
     themes: [
       "isotope-light-ui"
@@ -15,11 +32,27 @@
     ]
   "ctrl-dir-scroll": {}
   editor:
-    fontFamily: "\"DejaVu Sans Mono\""
+    backUpBeforeSaving: true
+    fontFamily: "Hack"
+    fontSize: 15
     invisibles: {}
   "exception-reporting":
     userId: "c34d39d1-3389-aac6-9341-3ae92ea11f63"
+  "linter-eslint":
+    disableFSCache: true
+    globalNodePath: "/home/phil/.nvm/versions/node/v6.0.0"
+    useGlobalEslint: true
   pigments:
     markerType: "dot"
+  "save-autorun":
+    notifications: false
+  "save-commands":
+    commands: [
+      {
+        "**/*.js": "js-beautify {absPath}{filename}"
+      }
+    ]
+  "tree-view":
+    hideIgnoredNames: true
   welcome:
     showOnStartup: false

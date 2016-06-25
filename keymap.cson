@@ -1,3 +1,12 @@
+'.platform-win32 .find-and-replace, .platform-linux .find-and-replace':
+  'ctrl-alt-/': 'unset!'
+  'cmd-r': 'find-and-replace:toggle-regex-option'
+
+'.platform-win32 .project-find, .platform-linux .project-find':
+  'ctrl-alt-/': 'unset!'
+  'cmd-r': 'project-find:toggle-regex-option'
+
+
 '.platform-linux atom-text-editor, .platform-win32 atom-text-editor, atom-text-editor':
   'ctrl-u': 'editor:delete-to-beginning-of-line'
 
@@ -30,6 +39,9 @@
   'ctrl-c': 'core:copy'
   'cmd-v': 'unset!'
   'ctrl-v': 'core:paste'
+  'f12': 'window:toggle-dev-tools'
+  'ctrl-tab': 'unset!'
+  'ctrl-shift-tab': 'unset!'
 
 '.platform-win32, .platform-linux':
   'alt': 'abort!'
@@ -51,7 +63,6 @@
   'ctrl-left': 'editor:move-to-beginning-of-word'
   'ctrl-shift-left': 'editor:select-to-beginning-of-word'
   'ctrl-right': 'editor:move-to-end-of-word'
-  'fn-right': 'editor:move-to-end-of-line'
   'ctrl-shift-right': 'editor:select-to-end-of-word'
   'ctrl-end': 'core:move-to-bottom'
   'ctrl-shift-end': 'core:select-to-bottom'
@@ -78,7 +89,6 @@
   'alt-s': 'symbols-view:toggle-project-symbols'
   'alt-w': 'hard-wrap:reflow-selection'
   'alt-m': 'markdown-preview:toggle'
-  'f12': 'window:toggle-dev-tools'
   'alt-f': 'find-and-replace:find-next'
   'shift-alt-f': 'find-and-replace:find-previous'
   'alt-a': 'find-and-replace:replace-all'
@@ -121,6 +131,8 @@
 '.platform-darwin atom-text-editor, .platform-linux atom-text-editor':
   'alt-o': 'fuzzy-finder:toggle-buffer-finder'
   'ctrl-r': 'command-palette:toggle'
+  'ctrl-tab': 'pane:show-next-item'
+  'ctrl-shift-tab': 'pane:show-previous-item'
 
 '.platform-win32 atom-text-editor, .platform-linux atom-text-editor':
   'f5': 'script:run'
