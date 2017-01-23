@@ -15,6 +15,7 @@
       "git-diff"
       "language-git"
       "open-on-github"
+      "linter-sass-lint"
     ]
     ignoredNames: [
       "node_modules"
@@ -26,6 +27,7 @@
       "save-autorun"
       "hard-wrap"
     ]
+    telemetryConsent: "no"
     themes: [
       "isotope-light-ui"
       "one-light-syntax"
@@ -34,14 +36,16 @@
   editor:
     backUpBeforeSaving: true
     fontFamily: "Hack"
-    fontSize: 15
     invisibles: {}
   "exception-reporting":
     userId: "c34d39d1-3389-aac6-9341-3ae92ea11f63"
   "linter-eslint":
     disableFSCache: true
     globalNodePath: "/home/phil/.nvm/versions/node/v6.0.0"
-    useGlobalEslint: true
+  "linter-shellcheck":
+    enableNotice: true
+    shellcheckExecutablePath: "/usr/bin/shellcheck"
+    userParameters: "-x"
   pigments:
     markerType: "dot"
   "save-autorun":

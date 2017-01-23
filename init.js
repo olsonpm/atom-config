@@ -6,12 +6,24 @@
 //---------//
 
 const path = require('path')
-  , fp = require('lodash/fp');
+  , fp = require('lodash/fp')
+  ;
+
+
+//------//
+// Init //
+//------//
+
+const type = getType()
+ , each = getEach()
+ ;
 
 
 //------//
 // Main //
 //------//
+
+createPersonalSnips();
 
 atom.commands.add('atom-text-editor', 'personal:doc-curline', function() {
   const editor = atom.workspace.getActiveTextEditor()
@@ -90,4 +102,58 @@ function doc(str) {
 
   editor.deleteLine();
   editor.insertText(out);
+}
+
+function createPersonalSnips() {
+  each(
+    (fn, name) => {
+      atom.commands.add('atom-text-editor', 'personal:snip-' + name, function() {
+        const editor = atom.workspace.getActiveTextEditor()
+          , selected = editor.getSelectedText();
+
+        editor.insertText(fn(selected));
+      });
+    }
+    , getSnipFns()
+  );
+}
+
+function getSnipFns() {
+  return fp.bindAll(
+    ['jlog', 'tee']
+    , {
+      log: str => "console.log('" + str + ": ' + " + str + ")"
+      , jlog(str) { return "console.log('" + str + ": ' + " + this.jstring(str) + ")"; }
+      , jstring: str => 'JSON.stringify(' + str + ', null, 2)'
+      , tee(str) { return str + ' => ' + this.jlog(str) + ' || ' + str; }
+    }
+  );
+}
+
+function getCollectionTypeToEach() {
+  return {
+    Object: (fn, obj) => {
+      Object.keys(obj).forEach(key => {
+        fn(obj[key], key, obj);
+      });
+      return obj;
+    }
+    , Array: (fn, arr) => arr.forEach(fn)
+  };
+}
+
+function getType() {
+  return val => (val === null)
+    ? 'Null'
+    : (val === undefined)
+      ? 'Undefined'
+      : Object.prototype.toString.call(val).slice(8, -1)
+    ;
+}
+
+function getEach() {
+  return fp.curryN(
+    2
+    , (fn, coll) => getCollectionTypeToEach()[type(coll)](fn, coll)
+  );
 }
