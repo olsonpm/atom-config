@@ -1,12 +1,3 @@
-'.platform-win32 .find-and-replace, .platform-linux .find-and-replace':
-  'ctrl-alt-/': 'unset!'
-  'cmd-r': 'find-and-replace:toggle-regex-option'
-
-'.platform-win32 .project-find, .platform-linux .project-find':
-  'ctrl-alt-/': 'unset!'
-  'cmd-r': 'project-find:toggle-regex-option'
-
-
 '.platform-linux atom-text-editor, .platform-win32 atom-text-editor, atom-text-editor':
   'ctrl-u': 'editor:delete-to-beginning-of-line'
 
@@ -39,7 +30,8 @@
   'ctrl-c': 'core:copy'
   'cmd-v': 'unset!'
   'ctrl-v': 'core:paste'
-  'f12': 'window:toggle-dev-tools'
+  'cmd-k cmd-n': 'unset!'
+  'ctrl-alt-tab': 'window:focus-next-pane'
   'ctrl-tab': 'unset!'
   'ctrl-shift-tab': 'unset!'
 
@@ -53,16 +45,23 @@
   'alt-down': 'unset!'
   'alt-right': 'unset!'
 
+'atom-workspace':
+  'ctrl-tab': 'pane:show-next-item'
+  'ctrl-shift-tab': 'pane:show-previous-item'
+
 'atom-workspace atom-text-editor':
   'alt-left': 'last-cursor-position:previous'
   'alt-right': 'last-cursor-position:next'
   'ctrl-k ctrl-l': 'unset!'
   'ctrl-k ctrl-u': 'unset!'
+  'ctrl-down': 'editor:move-line-down'
+  'ctrl-up': 'editor:move-line-up'
 
 'atom-text-editor':
   'ctrl-left': 'editor:move-to-beginning-of-word'
   'ctrl-shift-left': 'editor:select-to-beginning-of-word'
   'ctrl-right': 'editor:move-to-end-of-word'
+  'fn-right': 'editor:move-to-end-of-line'
   'ctrl-shift-right': 'editor:select-to-end-of-word'
   'ctrl-end': 'core:move-to-bottom'
   'ctrl-shift-end': 'core:select-to-bottom'
@@ -89,6 +88,7 @@
   'alt-s': 'symbols-view:toggle-project-symbols'
   'alt-w': 'hard-wrap:reflow-selection'
   'alt-m': 'markdown-preview:toggle'
+  'f12': 'window:toggle-dev-tools'
   'alt-f': 'find-and-replace:find-next'
   'shift-alt-f': 'find-and-replace:find-previous'
   'alt-a': 'find-and-replace:replace-all'
@@ -117,6 +117,8 @@
 
 'atom-workspace atom-text-editor:not([mini])':
   'ctrl-shift-d': 'personal:doc-curline'
+  'ctrl-cmd-down': 'unset!'
+  'ctrl-cmd-up': 'unset!'
   'ctrl-k ctrl-0': 'unset!'
   'ctrl-k ctrl-1': 'unset!'
   'ctrl-k ctrl-2': 'unset!'
@@ -131,10 +133,14 @@
 '.platform-darwin atom-text-editor, .platform-linux atom-text-editor':
   'alt-o': 'fuzzy-finder:toggle-buffer-finder'
   'ctrl-r': 'command-palette:toggle'
-  'ctrl-tab': 'pane:show-next-item'
-  'ctrl-shift-tab': 'pane:show-previous-item'
+  'cmd-r': 'unset!'
 
 '.platform-win32 atom-text-editor, .platform-linux atom-text-editor':
   'f5': 'script:run'
   'ctrl-shift-b': 'unset!'
   'ctrl-k ctrl-d': 'unset!'
+
+'.platform-darwin .find-and-replace':
+  'alt-cmd-/': 'unset!'
+  'cmd-r': 'find-and-replace:toggle-regex-option'
+  'cmd-c': 'find-and-replace:toggle-case-option'
