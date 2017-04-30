@@ -119,13 +119,16 @@ function createPersonalSnips() {
 }
 
 function getSnipFns() {
+  const _jlog = str => { return "console.log('" + str + ": ' + " + jstring(str) + ")"; }
+    , jstring = str => 'JSON.stringify(' + str + ', null, 2)'
+    ;
   return fp.bindAll(
     ['jlog', 'tee']
     , {
-      log: str => "console.log('" + str + ": ' + " + str + ")"
-      , jlog(str) { return "console.log('" + str + ": ' + " + this.jstring(str) + ")"; }
-      , jstring: str => 'JSON.stringify(' + str + ', null, 2)'
-      , tee(str) { return str + ' => ' + this.jlog(str) + ' || ' + str; }
+      log: str => "console.log('" + str + ": ' + " + str + ");"
+      , jlog: str => _jlog(str) + ';'
+      , jstring
+      , tee(str) { return str + ' => ' + _jlog(str) + ' || ' + str; }
     }
   );
 }

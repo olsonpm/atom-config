@@ -10,6 +10,7 @@
   core:
     disabledPackages: [
       "spell-check"
+      "language-mustache"
     ]
     excludeVcsIgnoredPaths: true
     packagesWithKeymapsDisabled: [
