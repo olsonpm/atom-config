@@ -17,6 +17,7 @@
       "open-on-github"
       "linter-sass-lint"
     ]
+    excludeVcsIgnoredPaths: false
     ignoredNames: [
       "node_modules"
     ]
@@ -46,6 +47,8 @@
     enableNotice: true
     shellcheckExecutablePath: "/usr/bin/shellcheck"
     userParameters: "-x"
+  "linter-ui-default":
+    gutterPosition: "Left"
   pigments:
     markerType: "dot"
   "save-autorun":
@@ -56,7 +59,9 @@
         "**/*.js": "js-beautify {absPath}{filename}"
       }
     ]
+  "toggle-gutter":
+    showNumbers: true
   "tree-view":
-    hideIgnoredNames: true
+    hideVcsIgnoredFiles: true
   welcome:
     showOnStartup: false
