@@ -27,6 +27,7 @@
   editor:
     fontFamily: "\"DejaVu Sans Mono\""
     invisibles: {}
+    preferredLineLength: 72
     tabType: "soft"
   "exception-reporting":
     userId: "c34d39d1-3389-aac6-9341-3ae92ea11f63"

@@ -88,48 +88,48 @@ atom-text-editor {
   }
 }
 
-.tree-view.list-tree li.selected:before
- , .tree-view.list-tree li:not(.list-nested-item).selected:before
- , .tree-view.list-tree li.list-nested-item.selected > .list-item:before
- , .tree-view.list-tree:focus li.selected:before
- , .tree-view.list-tree:focus li:not(.list-nested-item).selected:before
- , .tree-view.list-tree:focus li.list-nested-item.selected > .list-item:before {
+.tree-view > .list-tree li.selected:before
+ , .tree-view > .list-tree li:not(.list-nested-item).selected:before
+ , .tree-view > .list-tree li.list-nested-item.selected > .list-item:before
+ , .tree-view > .list-tree:focus li.selected:before
+ , .tree-view > .list-tree:focus li:not(.list-nested-item).selected:before
+ , .tree-view > .list-tree:focus li.list-nested-item.selected > .list-item:before {
 
   color: @default-font-color;
   background-color: @bg;
 }
 
-.tree-view.list-tree li li:not(.list-nested-item):hover
- , .tree-view.list-tree li li.list-nested-item > .list-item:hover
- , .tree-view.list-tree li.selected:hover:before
- , .tree-view.list-tree li:not(.list-nested-item).selected:hover:before
- , .tree-view.list-tree li.list-nested-item.selected > .list-item:hover:before
- , .tree-view.list-tree:focus li.selected:hover:before
- , .tree-view.list-tree:focus li:not(.list-nested-item).selected:hover:before
- , .tree-view.list-tree:focus li.list-nested-item.selected > .list-item:hover:before {
+.tree-view > .list-tree li li:not(.list-nested-item):hover
+ , .tree-view > .list-tree li li.list-nested-item > .list-item:hover
+ , .tree-view > .list-tree li.selected:hover:before
+ , .tree-view > .list-tree li:not(.list-nested-item).selected:hover:before
+ , .tree-view > .list-tree li.list-nested-item.selected > .list-item:hover:before
+ , .tree-view > .list-tree:focus li.selected:hover:before
+ , .tree-view > .list-tree:focus li:not(.list-nested-item).selected:hover:before
+ , .tree-view > .list-tree:focus li.list-nested-item.selected > .list-item:hover:before {
 
   color: @default-font-color !important;
   background-color: @bg-dark-2 !important;
 }
 
 
-.tree-view.list-tree li li.status-added
- , .tree-view.list-tree li li:not(.list-nested-item).status-added
- , .tree-view.list-tree li li.list-nested-item.status-added > .list-item {
+.tree-view > .list-tree li li.status-added
+ , .tree-view > .list-tree li li:not(.list-nested-item).status-added
+ , .tree-view > .list-tree li li.list-nested-item.status-added > .list-item {
 
    color: @green;
 }
 
-.tree-view.list-tree li li.status-modified
- , .tree-view.list-tree li li:not(.list-nested-item).status-modified
- , .tree-view.list-tree li li.list-nested-item.status-modified > .list-item {
+.tree-view > .list-tree li li.status-modified
+ , .tree-view > .list-tree li li:not(.list-nested-item).status-modified
+ , .tree-view > .list-tree li li.list-nested-item.status-modified > .list-item {
 
    color: @puke;
 }
 
-.tree-view.list-tree li
- , .tree-view.list-tree li:not(.list-nested-item)
- , .tree-view.list-tree li.list-nested-item > .list-item {
+.tree-view > .list-tree li
+ , .tree-view > .list-tree li:not(.list-nested-item)
+ , .tree-view > .list-tree li.list-nested-item > .list-item {
 
    color: @purple;
 }

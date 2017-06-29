@@ -34,6 +34,7 @@
   'ctrl-alt-tab': 'window:focus-next-pane'
   'ctrl-tab': 'unset!'
   'ctrl-shift-tab': 'unset!'
+  'alt-f4': 'window:close'
 
 '.platform-win32, .platform-linux':
   'alt': 'abort!'
