@@ -1,5 +1,6 @@
 apm install isotope-light-ui \
   pigments \
-  color-picker
+  color-picker \
+  ctrl-dir-scroll
 
 
