@@ -14,9 +14,11 @@ const path = require('path')
 // Init //
 //------//
 
-const type = getType()
- , each = getEach()
- ;
+const type = getType(),
+  each = getEach(),
+  docVariantToHeader = getDocVariantToHeader(),
+  fileExtensionToCommentString = getFileExtensionToCommentString()
+  ;
 
 
 //------//
@@ -25,7 +27,7 @@ const type = getType()
 
 createPersonalSnips();
 
-atom.commands.add('atom-text-editor', 'personal:doc-curline', function() {
+atom.commands.add('atom-text-editor', 'personal:doc-curline', () => {
   const editor = atom.workspace.getActiveTextEditor()
     , row = editor.getCursorBufferPosition().row;
 
@@ -34,28 +36,24 @@ atom.commands.add('atom-text-editor', 'personal:doc-curline', function() {
   editor.moveUp(1);
 });
 
-atom.commands.add('atom-text-editor', 'personal:toKebabCase', function() {
+atom.commands.add('atom-text-editor', 'personal:toKebabCase', () => {
   const editor = atom.workspace.getActiveTextEditor()
     , selected = editor.getSelectedText();
 
   editor.insertText(fp.kebabCase(selected));
 });
 
-atom.commands.add('atom-text-editor', 'personal:doc-import', function() {
-  doc('Imports');
+atom.commands.add('atom-text-editor', 'personal:sortSelectedLines', () => {
+  const editor = atom.workspace.getActiveTextEditor();
+  editor.selectLinesContainingCursors();
+  const sorted = editor.getSelectedText().split('\n').sort().join('\n');
+
+  editor.insertText(sorted);
 });
-atom.commands.add('atom-text-editor', 'personal:doc-export', function() {
-  doc('Exports');
-});
-atom.commands.add('atom-text-editor', 'personal:doc-main', function() {
-  doc('Main');
-});
-atom.commands.add('atom-text-editor', 'personal:doc-init', function() {
-  doc('Init');
-});
-atom.commands.add('atom-text-editor', 'personal:doc-helper', function() {
-  doc('Helper Fxns');
-});
+
+each((header, variant) => {
+  atom.commands.add('atom-text-editor', `personal:doc-${variant}`, () => doc(header));
+}, docVariantToHeader);
 
 
 //-------------//
@@ -66,39 +64,26 @@ function doc(str) {
   const editor = atom.workspace.getActiveTextEditor();
 
   // validate
-  let commentStr
-    , buf = editor.getBuffer()
+  let buf = editor.getBuffer()
     , filePath = fp.invoke('getPath', buf);
 
-  if (!filePath) {
-    return;
-  }
+  if (!filePath) return;
 
-  let fileExt = path.extname(filePath).slice(1);
+  const fileExt = path.extname(filePath).slice(1) || getFromHashBang();
   if (!fileExt) {
-    let firstLine = editor.lineTextForBufferRow(0);
-    if (firstLine.match(/^#!.*(|ba|z)sh$/)) {
-      fileExt = 'sh';
-    }
+    throw new Error("Unable to discern the file extension");
   }
 
-  switch (fileExt) {
-    case 'sh':
-      commentStr = '#';
-      break;
-
-    case 'js':
-    case 'scss':
-      commentStr = '//';
-      break;
-
-    default:
-      throw new Error("Unable to document current file - extension '" + fileExt + "' is not covered");
+  const commentStr = fileExtensionToCommentString[fileExt];
+  if (!commentStr) {
+    throw new Error("Unable to document current file - extension '" + fileExt + "' is not covered");
   }
+
+  // no errors - woo woo
 
   const textLength = str.length
     , border = commentStr + fp.repeat(textLength + 2, '-') + commentStr + '\n'
-    , out = border + commentStr + ' ' + str + ' ' + commentStr + '\n' + border + "\n";
+    , out = `${border}${commentStr} ${str} ${commentStr}\n${border}\n`;
 
   editor.deleteLine();
   editor.insertText(out);
@@ -157,6 +142,35 @@ function getType() {
 function getEach() {
   return fp.curryN(
     2
-    , (fn, coll) => getCollectionTypeToEach()[type(coll)](fn, coll)
+    , (fn, coll) => {
+      getCollectionTypeToEach()[type(coll)](fn, coll);
+    }
   );
+}
+
+function getDocVariantToHeader() {
+  return {
+    import: 'Imports',
+    export: 'Exports',
+    main: 'Main',
+    init: 'Init',
+    helper: 'Helper Functions'
+  };
+}
+
+function getFileExtensionToCommentString() {
+  return {
+    sh: '#',
+    js: '//',
+    scss: '//',
+    lua: '--',
+    sql: '--'
+  };
+}
+
+function getFromHashBang() {
+  let firstLine = editor.lineTextForBufferRow(0);
+  if (firstLine.match(/^#!.*(|ba|z)sh$/)) {
+    fileExt = 'sh';
+  }
 }
