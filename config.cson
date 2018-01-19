@@ -11,6 +11,7 @@
   core:
     PATH: "/home/phil/.lilyvm/bin:/home/phil/.gem/ruby/2.3.0/bin:/home/phil/.nvm/versions/node/v6.0.0/bin:/home/phil/bin:/home/phil/.govm/versions/current/bin:/home/phil/.pyenv/plugins/pyenv-virtualenv/shims:/home/phil/.pyenv/shims:/home/phil/.pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
     allowPendingPaneItems: false
+    autoHideMenuBar: true
     disabledPackages: [
       "git-diff"
       "language-git"
@@ -53,6 +54,9 @@
   "linter-ui-default":
     gutterPosition: "Left"
   pigments: {}
+  "prettier-atom":
+    formatOnSaveOptions:
+      enabled: true
   "save-autorun":
     notifications: false
   "save-commands":
