@@ -61,7 +61,7 @@ each((header, variant) => {
 //-------------//
 
 function doc(str, variant) {
-  const hasPrecedingCommentLineForSpacing = variant === "import";
+  const hasPrecedingCommentLineForSpacing = variant !== "import";
 
   const editor = atom.workspace.getActiveTextEditor();
 
