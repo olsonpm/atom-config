@@ -2,6 +2,13 @@
   "atom-beautify":
     general:
       _analyticsUserId: "341af4ba-5046-42fa-a28a-7d3011575b2b"
+    html:
+      beautify_on_save: true
+      end_with_newline: true
+    js:
+      disabled: true
+    lua:
+      beautify_on_save: true
   "autocomplete-plus":
     enableAutoActivation: false
     includeCompletionsFromAllBuffers: false
@@ -11,7 +18,6 @@
   core:
     PATH: "/home/phil/.lilyvm/bin:/home/phil/.gem/ruby/2.3.0/bin:/home/phil/.nvm/versions/node/v6.0.0/bin:/home/phil/bin:/home/phil/.govm/versions/current/bin:/home/phil/.pyenv/plugins/pyenv-virtualenv/shims:/home/phil/.pyenv/shims:/home/phil/.pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl"
     allowPendingPaneItems: false
-    autoHideMenuBar: true
     disabledPackages: [
       "git-diff"
       "language-git"
@@ -53,10 +59,17 @@
     userParameters: "-x"
   "linter-ui-default":
     gutterPosition: "Left"
+    showPanel: true
   pigments: {}
   "prettier-atom":
     formatOnSaveOptions:
       enabled: true
+      excludedGlobs: [
+        "*.md"
+        "package.json"
+      ]
+    prettierOptions:
+      singleQuote: true
   "save-autorun":
     notifications: false
   "save-commands":

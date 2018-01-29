@@ -1,12 +1,14 @@
-"use strict";
+'use strict';
 
 //---------//
 // Imports //
 //---------//
 
-const path = require("path"),
-  fp = require("lodash/fp");
+const fp = require('lodash/fp'),
+  path = require('path'),
+  runCommandWithArgs = require('./personal/run-command-with-args');
 
+//
 //------//
 // Init //
 //------//
@@ -16,65 +18,70 @@ const type = getType(),
   docVariantToHeader = getDocVariantToHeader(),
   fileExtensionToCommentString = getFileExtensionToCommentString();
 
+//
 //------//
 // Main //
 //------//
 
+runCommandWithArgs.init();
+
 createPersonalSnips();
 
-atom.commands.add("atom-text-editor", "personal:doc-curline", () => {
+atom.commands.add('atom-text-editor', 'personal:doc-curline', () => {
   const editor = atom.workspace.getActiveTextEditor(),
     row = editor.getCursorBufferPosition().row;
 
   doc(editor.lineTextForBufferRow(row));
-  editor.insertText("\n");
+  editor.insertText('\n');
   editor.moveUp(1);
 });
 
-atom.commands.add("atom-text-editor", "personal:toKebabCase", () => {
+atom.commands.add('atom-text-editor', 'personal:toKebabCase', () => {
   const editor = atom.workspace.getActiveTextEditor(),
     selected = editor.getSelectedText();
 
   editor.insertText(fp.kebabCase(selected));
 });
 
-atom.commands.add("atom-text-editor", "personal:sortSelectedLines", () => {
+atom.commands.add('atom-text-editor', 'personal:sortSelectedLines', () => {
   const editor = atom.workspace.getActiveTextEditor();
   editor.selectLinesContainingCursors();
   const sorted = editor
     .getSelectedText()
-    .split("\n")
+    .split('\n')
     .sort()
-    .join("\n");
+    .join('\n');
 
   editor.insertText(sorted);
 });
 
 each((header, variant) => {
-  atom.commands.add("atom-text-editor", `personal:doc-${variant}`, () =>
+  atom.commands.add('atom-text-editor', `personal:doc-${variant}`, () =>
     doc(header, variant)
   );
 }, docVariantToHeader);
 
+//
 //-------------//
 // Helper Fxns //
 //-------------//
 
 function doc(str, variant) {
-  const hasPrecedingCommentLineForSpacing = variant !== "import";
-
   const editor = atom.workspace.getActiveTextEditor();
 
   // validate
   let buf = editor.getBuffer(),
-    filePath = fp.invoke("getPath", buf);
+    filePath = fp.invoke('getPath', buf);
 
   if (!filePath) return;
 
-  const fileExt = path.extname(filePath).slice(1) || getFromHashBang();
+  const fileExt = path.extname(filePath).slice(1) || getFromHashBang(editor);
   if (!fileExt) {
-    throw new Error("Unable to discern the file extension");
+    throw new Error('Unable to discern the file extension');
   }
+
+  const hasPrecedingCommentLineForSpacing =
+    fileExt === 'js' && variant !== 'import';
 
   const commentStr = fileExtensionToCommentString[fileExt];
   if (!commentStr) {
@@ -89,9 +96,9 @@ function doc(str, variant) {
 
   const textLength = str.length,
     precedingCommentStr = hasPrecedingCommentLineForSpacing
-      ? commentStr + "\n"
-      : "",
-    border = commentStr + fp.repeat(textLength + 2, "-") + commentStr + "\n",
+      ? commentStr + '\n'
+      : '',
+    border = commentStr + fp.repeat(textLength + 2, '-') + commentStr + '\n',
     out = `${precedingCommentStr}${border}${commentStr} ${str} ${commentStr}\n${border}\n`;
 
   editor.deleteLine();
@@ -100,7 +107,7 @@ function doc(str, variant) {
 
 function createPersonalSnips() {
   each((fn, name) => {
-    atom.commands.add("atom-text-editor", "personal:snip-" + name, function() {
+    atom.commands.add('atom-text-editor', 'personal:snip-' + name, function() {
       const editor = atom.workspace.getActiveTextEditor(),
         selected = editor.getSelectedText();
 
@@ -111,15 +118,15 @@ function createPersonalSnips() {
 
 function getSnipFns() {
   const _jlog = str => {
-      return "console.log('" + str + ": ' + " + jstring(str) + ")";
+      return `console.log('${str}: ' + ${jstring(str)}')'`;
     },
-    jstring = str => "JSON.stringify(" + str + ", null, 2)";
-  return fp.bindAll(["jlog", "tee"], {
-    log: str => "console.log('" + str + ": ' + " + str + ");",
-    jlog: str => _jlog(str) + ";",
+    jstring = str => `JSON.stringify(${str}, null, 2)`;
+  return fp.bindAll(['jlog', 'tee'], {
+    log: str => `console.log('${str}: ' + ${str});`,
+    jlog: str => _jlog(str) + ';',
     jstring,
     tee(str) {
-      return str + " => " + _jlog(str) + " || " + str;
+      return str + ' => ' + _jlog(str) + ' || ' + str;
     }
   });
 }
@@ -139,9 +146,9 @@ function getCollectionTypeToEach() {
 function getType() {
   return val =>
     val === null
-      ? "Null"
+      ? 'Null'
       : val === undefined
-        ? "Undefined"
+        ? 'Undefined'
         : Object.prototype.toString.call(val).slice(8, -1);
 }
 
@@ -153,27 +160,25 @@ function getEach() {
 
 function getDocVariantToHeader() {
   return {
-    import: "Imports",
-    export: "Exports",
-    main: "Main",
-    init: "Init",
-    helper: "Helper Functions"
+    import: 'Imports',
+    export: 'Exports',
+    main: 'Main',
+    init: 'Init',
+    helper: 'Helper Functions'
   };
 }
 
 function getFileExtensionToCommentString() {
   return {
-    sh: "#",
-    js: "//",
-    scss: "//",
-    lua: "--",
-    sql: "--"
+    sh: '#',
+    js: '//',
+    scss: '//',
+    lua: '--',
+    sql: '--'
   };
 }
 
-function getFromHashBang() {
+function getFromHashBang(editor) {
   let firstLine = editor.lineTextForBufferRow(0);
-  if (firstLine.match(/^#!.*(|ba|z)sh$/)) {
-    fileExt = "sh";
-  }
+  return firstLine.match(/^#!.*(|ba|z)sh$/) ? 'sh' : '';
 }
