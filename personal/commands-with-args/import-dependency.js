@@ -12,9 +12,11 @@ const _ = require('lodash'),
 // Init //
 //------//
 
-const methodToGetDeclaration = getMethodToGetDeclaration(),
+const depStringToVarName = getDepStringToVarName(),
+  methodToGetDeclaration = getMethodToGetDeclaration(),
   importsHeader = getImportsHeader(),
-  re = getRegexes();
+  re = getRegexes(),
+  setOfConstructorDepStrings = getSetOfConstructorDepStrings();
 
 //
 //------//
@@ -49,22 +51,27 @@ function importDependency(depString) {
     return;
   }
 
-  // no errors woo woo
-
   const oldPosition = editor.getCursorBufferPosition(),
     oldText = editor.getText(),
     importSection = getImportSection(oldText),
-    nodeModuleOrRelative = getDepStringNodeModuleOrRelative(depString),
-    method = getImportOrRequire(importSection.text),
-    varName = _.camelCase(path.basename(depString)),
+    { errorMessage, method } = getImportOrRequire(importSection.text);
+
+  if (errorMessage) {
+    atom.notifications.addError(errorMessage);
+    return;
+  }
+
+  // finally, no errors
+
+  const nodeModuleOrRelative = getDepStringNodeModuleOrRelative(depString),
+    varName = getVarName(depString),
     declaration = methodToGetDeclaration[method](depString, varName);
 
   const newText = getUpdatedText(
     declaration,
     importSection,
     nodeModuleOrRelative,
-    oldText,
-    varName
+    oldText
   );
 
   editor.setText(newText);
@@ -89,24 +96,14 @@ function getUpdatedText(
   declaration,
   importSection,
   nodeModuleOrRelative,
-  oldText,
-  varName
+  oldText
 ) {
   if (!importSection) {
     return handleNoImportSectionCase(oldText, declaration);
   }
 
   const subSections = getImportSubSections(importSection.text);
-
-  let indexToInsert = _.findIndex(
-    subSections[nodeModuleOrRelative],
-    aLine => varName.localeCompare(re.varName.exec(aLine)[1]) < 0
-  );
-  if (indexToInsert === -1) {
-    indexToInsert = subSections[nodeModuleOrRelative].length;
-  }
-
-  subSections[nodeModuleOrRelative].splice(indexToInsert, 0, declaration);
+  subSections[nodeModuleOrRelative].push(declaration);
 
   const preImportSection = oldText.slice(0, importSection.startIndex),
     newImportSection = buildImportSection(subSections),
@@ -118,12 +115,19 @@ function getUpdatedText(
 function buildImportSection(subSections) {
   return _.reject(
     [
-      subSections.nodeModule.map(sanitizeDeclaration).join('\n'),
-      subSections.relative.map(sanitizeDeclaration).join('\n'),
+      sanitizeSubSection(subSections.nodeModule),
+      sanitizeSubSection(subSections.relative),
       subSections.rest.join('\n')
     ],
     _.isEmpty
   ).join('\n\n');
+}
+
+function sanitizeSubSection(nodeModuleOrRelativeSubSection) {
+  return _(nodeModuleOrRelativeSubSection)
+    .sortBy(byVarName)
+    .map(sanitizeDeclaration)
+    .join('\n');
 }
 
 function sanitizeDeclaration(aLine, idx, allLines) {
@@ -146,11 +150,16 @@ function sanitizeDeclaration(aLine, idx, allLines) {
 function getImportSubSections(text) {
   const allLines = text.split('\n'),
     nodeModule = _.takeWhile(allLines, isNodeModuleLine),
-    rest = _.takeWhile(
-      allLines,
-      aLine => !isNodeModuleLine(aLine) && !isRelativeLine(aLine)
-    ),
-    relative = allLines.slice(nodeModule.length, allLines.length - rest.length);
+    rest = _(allLines)
+      .takeRightWhile(
+        aLine => !isNodeModuleLine(aLine) && !isRelativeLine(aLine)
+      )
+      .dropWhile(isEmptyOrWhitespace)
+      .value(),
+    relative = _(allLines)
+      .slice(nodeModule.length, allLines.length - rest.length)
+      .dropWhile(isEmptyOrWhitespace)
+      .value();
 
   if (!_.isArray(nodeModule)) {
     throw new Error(
@@ -242,14 +251,21 @@ function getMethodToGetDeclaration() {
 function getImportOrRequire(importSectionText) {
   if (!importSectionText) return 'require';
 
-  const requireIndex = _.get(
-      re.require.exec(importSectionText),
-      'index',
-      Infinity
-    ),
-    importIndex = _.get(re.import.exec(importSectionText), 'index', Infinity);
+  const firstLine = importSectionText.split('\n')[0],
+    isRequire = re.require.test(firstLine),
+    isImport = re.import.test(firstLine);
 
-  return requireIndex < importIndex ? 'require' : 'import';
+  if (!isRequire && !isImport) {
+    return {
+      errorMessage:
+        "The import section's first line must either be a require or an import\n\n" +
+        `importSectionText\n\n${importSectionText}\n\n`
+    };
+  }
+
+  return {
+    method: isRequire ? 'require' : 'import'
+  };
 }
 
 function getImportsHeader() {
@@ -265,9 +281,9 @@ function getRegexes() {
     depString: /.*'(.*)'.*/,
     firstBlankLine: /\n\n/,
     import: /^import [a-zA-Z_$][a-zA-Z0-9_$]* from '[./\\_$\-@a-zA-Z0-9]+';$/,
-    importSection: /(\n\/\/ Imports \/\/\n.*\n\n)([\s\S]*)\n\n\/\/\n\/\/-+\/\/\n/,
-    require: /^(?:const| {2},) ([a-zA-Z_$][a-zA-Z0-9_$]*) = require\('([./\\_$\-@a-zA-Z0-9]+)'\);$/,
-    varName: /(?:import|const| {2},) ([a-zA-Z_$][a-zA-Z0-9_$]*) /
+    importSection: /(\n\/\/ Imports \/\/\n.*\n\n)([\s\S]*?)\n\n\/\/\n\/\/-+\/\/\n/,
+    require: /^(?:const| ) ([a-zA-Z_$][a-zA-Z0-9_$]*) = require\('([./\\_$\-@a-zA-Z0-9]+)'\)(?:,|;)$/,
+    varName: /^(?:import|const| ) ([a-zA-Z_$][a-zA-Z0-9_$]*) /
   };
 }
 
@@ -294,6 +310,37 @@ function getImportSection(text) {
     endIndex: result.index + header.length + content.length,
     text: content
   };
+}
+
+function isEmptyOrWhitespace(str) {
+  return !str || /^\s*$/.test(str);
+}
+
+function byVarName(line) {
+  return re.varName.exec(line)[1].toLowerCase();
+}
+
+function getDepStringToVarName() {
+  return {
+    lodash: '_',
+    koa: 'Koa',
+    'koa-router': 'KoaRouter',
+    vue: 'Vue'
+  };
+}
+
+function getSetOfConstructorDepStrings() {
+  return new Set(['koa', 'koa-router', 'vue']);
+}
+
+function getVarName(depString) {
+  const custom = depStringToVarName[depString];
+  if (custom) return custom;
+
+  if (setOfConstructorDepStrings.has(depString))
+    return _.flow(_.camelCase, _.upperFirst)(depString);
+
+  return _.camelCase(path.basename(depString));
 }
 
 //
