@@ -16,7 +16,8 @@ const depStringToVarName = getDepStringToVarName(),
   methodToGetDeclaration = getMethodToGetDeclaration(),
   importsHeader = getImportsHeader(),
   re = getRegexes(),
-  setOfConstructorDepStrings = getSetOfConstructorDepStrings();
+  setOfConstructorDepStrings = getSetOfConstructorDepStrings(),
+  setOfPifiedDepStrings = getSetOfPifiedDepStrings();
 
 //
 //------//
@@ -65,11 +66,12 @@ function importDependency(depString) {
 
   const nodeModuleOrRelative = getDepStringNodeModuleOrRelative(depString),
     varName = getVarName(depString),
-    declaration = methodToGetDeclaration[method](depString, varName);
+    dependencyObj = { depString, varName };
 
   const newText = getUpdatedText(
-    declaration,
+    dependencyObj,
     importSection,
+    method,
     nodeModuleOrRelative,
     oldText
   );
@@ -93,106 +95,127 @@ function getDepStringNodeModuleOrRelative(depString) {
 }
 
 function getUpdatedText(
-  declaration,
+  dependencyObj,
   importSection,
+  method,
   nodeModuleOrRelative,
   oldText
 ) {
   if (!importSection) {
+    const declaration = methodToGetDeclaration[method](dependencyObj, 'only');
     return handleNoImportSectionCase(oldText, declaration);
   }
 
   const subSections = getImportSubSections(importSection.text);
-  subSections[nodeModuleOrRelative].push(declaration);
+  subSections[nodeModuleOrRelative].push(dependencyObj);
 
   const preImportSection = oldText.slice(0, importSection.startIndex),
-    newImportSection = buildImportSection(subSections),
+    newImportSection = buildImportSection(method, subSections),
     postImportSection = oldText.slice(importSection.endIndex);
 
   return preImportSection + newImportSection + postImportSection;
 }
 
-function buildImportSection(subSections) {
+function buildImportSection(method, { nodeModule, relative, rest }) {
+  const getDeclaration = methodToGetDeclaration[method],
+    pifyDep = _.find(nodeModule, { depString: 'pify' });
+
+  let pifyStr = '';
+  if (
+    pifyDep ||
+    _.some(nodeModule, ({ depString }) => setOfPifiedDepStrings.has(depString))
+  ) {
+    pifyStr = getDeclaration({ depString: 'pify', varName: 'pify' }, 'only');
+  }
+
+  _.pull(nodeModule, pifyDep);
+
   return _.reject(
     [
-      sanitizeSubSection(subSections.nodeModule),
-      sanitizeSubSection(subSections.relative),
-      subSections.rest.join('\n')
+      pifyStr,
+      buildSubSection(method, nodeModule),
+      buildSubSection(method, relative),
+      rest.join('\n')
     ],
     _.isEmpty
   ).join('\n\n');
 }
 
-function sanitizeSubSection(nodeModuleOrRelativeSubSection) {
+function buildSubSection(method, nodeModuleOrRelativeSubSection) {
+  const toDeclaration = getDeclarationMapper(method);
+
   return _(nodeModuleOrRelativeSubSection)
-    .sortBy(byVarName)
-    .map(sanitizeDeclaration)
+    .sortBy(lowerCaseVarName)
+    .map(toDeclaration)
     .join('\n');
 }
 
-function sanitizeDeclaration(aLine, idx, allLines) {
-  if (re.import.test(aLine) || (idx === 0 && allLines.length === 1))
-    return aLine;
+function getDeclarationMapper(method) {
+  const getDeclaration = methodToGetDeclaration[method];
 
-  const varName = re.require.exec(aLine)[1],
-    depString = re.require.exec(aLine)[2],
-    declaration = `${varName} = require('${depString}')`;
+  return (depObj, idx, allDepObjs) => {
+    if (method === 'import') return getDeclaration(depObj);
 
-  if (idx === 0) {
-    return `const ${declaration},`;
-  } else if (idx === allLines.length - 1) {
-    return `  ${declaration};`;
-  } else {
-    return `  ${declaration},`;
-  }
+    let variant;
+    if (idx === 0) {
+      variant = allDepObjs.length === 1 ? 'only' : 'first';
+    } else {
+      variant = idx === allDepObjs.length - 1 ? 'last' : 'middle';
+    }
+
+    return getDeclaration(depObj, variant);
+  };
 }
 
+//
+// returns an object with the schema
+// {
+//   nodeModule: [dependencyObj, ...],
+//   relative: [dependencyObj, ...],
+//   rest: [<string>, ...]
+// }
+//
+// where dependencyObj has the shape
+// {
+//   varName: <string>,
+//   depString: <string>
+// }
+//
 function getImportSubSections(text) {
-  const allLines = text.split('\n'),
-    nodeModule = _.takeWhile(allLines, isNodeModuleLine),
-    rest = _(allLines)
-      .takeRightWhile(
-        aLine => !isNodeModuleLine(aLine) && !isRelativeLine(aLine)
-      )
-      .dropWhile(isEmptyOrWhitespace)
-      .value(),
-    relative = _(allLines)
-      .slice(nodeModule.length, allLines.length - rest.length)
-      .dropWhile(isEmptyOrWhitespace)
-      .value();
+  const allLines = text.split('\n');
 
-  if (!_.isArray(nodeModule)) {
-    throw new Error(
-      'nodeModule is not an array:\n' +
-        JSON.stringify(nodeModule, null, 2) +
-        '\n\ntype: ' +
-        typeof nodeModule
-    );
-  }
+  let nodeModule = _.takeWhile(allLines, isEmptyOrNodeModuleLine);
 
-  if (!_.isArray(relative)) {
-    throw new Error(
-      'relative is not an array:\n' +
-        JSON.stringify(relative, null, 2) +
-        '\n\ntype: ' +
-        typeof relative
-    );
-  }
+  const rest = _.takeRightWhile(
+    allLines,
+    aLine => !isNodeModuleLine(aLine) && !isRelativeLine(aLine)
+  );
 
-  if (!_.isArray(rest)) {
-    throw new Error(
-      'rest is not an array:\n' +
-        JSON.stringify(rest, null, 2) +
-        '\n\ntype: ' +
-        typeof rest
-    );
-  }
+  const relative = _(allLines)
+    .slice(nodeModule.length, allLines.length - rest.length)
+    .thru(toDependencyObjects);
+
+  nodeModule = toDependencyObjects(nodeModule);
 
   return {
     nodeModule,
     relative,
     rest
   };
+}
+
+function toDependencyObjects(lines) {
+  return _(lines)
+    .reject(isEmptyOrWhitespace)
+    .map(aLine => ({
+      depString: re.depString.exec(aLine)[1],
+      varName: re.varName.exec(aLine)[1]
+    }))
+    .value();
+}
+
+function isEmptyOrNodeModuleLine(line) {
+  return isEmptyOrWhitespace(line) || isNodeModuleLine(line);
 }
 
 function isNodeModuleLine(line) {
@@ -238,11 +261,34 @@ function handleNoImportSectionCase(oldText, declaration) {
 }
 
 function getMethodToGetDeclaration() {
-  return {
-    import: (depString, varName) => `import ${varName} from '${depString}';`,
-    require: (depString, varName) =>
-      `const ${varName} = require('${depString}');`
-  };
+  const getBody = ({ depString, varName }) => {
+      return setOfPifiedDepStrings.has(depString)
+        ? `p${_.upperFirst(varName)} = pify(require('${depString}'))`
+        : `${varName} = require('${depString}')`;
+    },
+    variantToRequire = {
+      only: depObj => `const ${getBody(depObj)};`,
+      first: depObj => `const ${getBody(depObj)},`,
+      middle: depObj => `  ${getBody(depObj)},`,
+      last: depObj => `  ${getBody(depObj)};`
+    };
+
+  return _.mapValues(
+    {
+      import: ({ depString, varName }) =>
+        `import ${varName} from '${depString}';`,
+      require: (depObj, variant) => variantToRequire[variant](depObj)
+    },
+    returnEmptyStringWhenDepObjIsFalsey
+  );
+}
+
+function getSetOfPifiedDepStrings() {
+  return new Set(['fs']);
+}
+
+function returnEmptyStringWhenDepObjIsFalsey(getDeclaration) {
+  return (depObj, variant) => (!depObj ? '' : getDeclaration(depObj, variant));
 }
 
 //
@@ -316,8 +362,8 @@ function isEmptyOrWhitespace(str) {
   return !str || /^\s*$/.test(str);
 }
 
-function byVarName(line) {
-  return re.varName.exec(line)[1].toLowerCase();
+function lowerCaseVarName({ varName }) {
+  return varName.toLowerCase();
 }
 
 function getDepStringToVarName() {
