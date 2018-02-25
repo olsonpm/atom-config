@@ -37,7 +37,7 @@
     ]
     telemetryConsent: "no"
     themes: [
-      "one-light-ui"
+      "isotope-light-ui"
       "one-light-syntax"
     ]
   "ctrl-dir-scroll": {}
