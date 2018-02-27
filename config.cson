@@ -41,6 +41,9 @@
       "one-light-syntax"
     ]
   "ctrl-dir-scroll": {}
+  "dead-simple-light-syntax":
+    baseColor: "white"
+    scheme: "blue"
   editor:
     backUpBeforeSaving: true
     fontFamily: "Hack"
@@ -53,6 +56,8 @@
   "linter-eslint":
     disableFSCache: true
     globalNodePath: "/home/phil/.nvm/versions/node/v6.0.0"
+  "linter-flow":
+    executablePath: "./node_modules/.bin/flow"
   "linter-shellcheck":
     enableNotice: true
     shellcheckExecutablePath: "/usr/bin/shellcheck"
@@ -60,15 +65,28 @@
   "linter-ui-default":
     gutterPosition: "Left"
     showPanel: true
-  pigments: {}
+  pigments:
+    autocompleteScopes: [
+      ".source.css"
+      ".source.css.less"
+      ".source.sass"
+      ".source.css.scss"
+      ".source.stylus"
+      ".source.js"
+    ]
   "prettier-atom":
     formatOnSaveOptions:
       enabled: true
       excludedGlobs: [
         "*.md"
         "package.json"
+        "*node_modules*"
       ]
+      isDisabledIfNoConfigFile: true
+      isDisabledIfNotInPackageJson: true
+    prettierEslintOptions: {}
     prettierOptions:
+      bracketSpacing: false
       singleQuote: true
   "save-autorun":
     notifications: false
@@ -81,6 +99,7 @@
   "toggle-gutter":
     showNumbers: true
   "tree-view":
+    hideIgnoredNames: true
     hideVcsIgnoredFiles: true
   welcome:
     showOnStartup: false

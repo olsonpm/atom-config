@@ -25,8 +25,6 @@ const type = getType(),
 
 runCommandWithArgs.init();
 
-createPersonalSnips();
-
 atom.commands.add('atom-text-editor', 'personal:doc-curline', () => {
   const editor = atom.workspace.getActiveTextEditor(),
     row = editor.getCursorBufferPosition().row;
@@ -103,32 +101,6 @@ function doc(str, variant) {
 
   editor.deleteLine();
   editor.insertText(out);
-}
-
-function createPersonalSnips() {
-  each((fn, name) => {
-    atom.commands.add('atom-text-editor', 'personal:snip-' + name, function() {
-      const editor = atom.workspace.getActiveTextEditor(),
-        selected = editor.getSelectedText();
-
-      editor.insertText(fn(selected));
-    });
-  }, getSnipFns());
-}
-
-function getSnipFns() {
-  const _jlog = str => {
-      return `console.log('${str}: ' + ${jstring(str)}')'`;
-    },
-    jstring = str => `JSON.stringify(${str}, null, 2)`;
-  return fp.bindAll(['jlog', 'tee'], {
-    log: str => `console.log('${str}: ' + ${str});`,
-    jlog: str => _jlog(str) + ';',
-    jstring,
-    tee(str) {
-      return str + ' => ' + _jlog(str) + ' || ' + str;
-    }
-  });
 }
 
 function getCollectionTypeToEach() {

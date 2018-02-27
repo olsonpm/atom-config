@@ -4,7 +4,7 @@
 // Imports //
 //---------//
 
-const importDependency = require('./commands-with-args/import-dependency');
+const commands = require('./commands-with-args');
 
 //
 //------//
@@ -14,7 +14,7 @@ const importDependency = require('./commands-with-args/import-dependency');
 function init() {
   atom.packages.onDidActivatePackage(pkg => {
     if (pkg.name === 'run-command-with-args') {
-      pkg.mainModule.initializeCommands([importDependency]);
+      pkg.mainModule.initializeCommands(commands);
     }
   });
 }

@@ -3,6 +3,33 @@ body {
   font-size: 16px;
 }
 
+.scroll-view > .vertical-scrollbar {
+  width: 17px !important;
+
+  > div {
+    width: 17px !important;
+  }
+}
+
+.scrollbars-visible-always {
+  ::-webkit-scrollbar {
+    width: 16px;
+    height: 16px;
+  }
+
+  ::-webkit-scrollbar-thumb:vertical:active {
+    border-radius: 5px;
+    border-left-width: 3px;
+    border-right-width: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:horizontal:active {
+    border-radius: 5px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+  }
+}
+
 atom-text-editor {
   .gutter .line-number .icon-right {
     visibility: hidden !important;

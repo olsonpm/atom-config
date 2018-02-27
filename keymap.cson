@@ -9,6 +9,10 @@
 '.platform-linux .find-and-replace, .platform-win32 .find-and-replace, .find-and-replace':
   'ctrl-alt-s': 'unset!'
 
+'html':
+  'ctrl-tab': 'pane:show-next-item'
+  'ctrl-shift-tab': 'pane:show-previous-item'
+
 'body':
   'ctrl-o': 'fuzzy-finder:toggle-file-finder'
   'ctrl-shift-n': 'unset!'
@@ -42,7 +46,7 @@
 '.platform-win32, .platform-linux':
   'alt': 'abort!'
   'alt-f1': 'window:toggle-menu-bar'
-  'ctrl-shift-R': 'unset!'  
+  'ctrl-shift-R': 'unset!'
 
 'body .native-key-bindings':
   'alt-up': 'unset!'
@@ -111,6 +115,7 @@
 'atom-text-editor:not(.mini)':
   'ctrl-shift-n': 'linter:next-error'
   'f5': 'script:run'
+  'shift-enter': 'editor:newline'
 
 '.platform-linux .command-palette atom-text-editor, .platform-linux, atom-text-editor, body':
   'ctrl-shift-p': 'linter:previous-error'
@@ -131,8 +136,6 @@
 '.platform-darwin atom-text-editor, .platform-linux atom-text-editor':
   'alt-o': 'fuzzy-finder:toggle-buffer-finder'
   'ctrl-r': 'command-palette:toggle'
-  'ctrl-tab': 'pane:show-next-item'
-  'ctrl-shift-tab': 'pane:show-previous-item'
 
 '.platform-win32 atom-text-editor, .platform-linux atom-text-editor':
   'f5': 'script:run'

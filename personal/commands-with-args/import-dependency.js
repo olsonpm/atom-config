@@ -55,7 +55,7 @@ function importDependency(depString) {
   const oldPosition = editor.getCursorBufferPosition(),
     oldText = editor.getText(),
     importSection = getImportSection(oldText),
-    { errorMessage, method } = getImportOrRequire(importSection.text);
+    {errorMessage, method} = getImportOrRequire(importSection.text);
 
   if (errorMessage) {
     atom.notifications.addError(errorMessage);
@@ -66,7 +66,7 @@ function importDependency(depString) {
 
   const nodeModuleOrRelative = getDepStringNodeModuleOrRelative(depString),
     varName = getVarName(depString),
-    dependencyObj = { depString, varName };
+    dependencyObj = {depString, varName};
 
   const newText = getUpdatedText(
     dependencyObj,
@@ -116,19 +116,22 @@ function getUpdatedText(
   return preImportSection + newImportSection + postImportSection;
 }
 
-function buildImportSection(method, { nodeModule, relative, rest }) {
-  const getDeclaration = methodToGetDeclaration[method],
-    pifyDep = _.find(nodeModule, { depString: 'pify' });
+function buildImportSection(method, {nodeModule, relative, rest}) {
+  const getDeclaration = methodToGetDeclaration[method];
 
   let pifyStr = '';
-  if (
-    pifyDep ||
-    _.some(nodeModule, ({ depString }) => setOfPifiedDepStrings.has(depString))
-  ) {
-    pifyStr = getDeclaration({ depString: 'pify', varName: 'pify' }, 'only');
-  }
 
-  _.pull(nodeModule, pifyDep);
+  if (method === 'require') {
+    const pifyDep = _.find(nodeModule, {depString: 'pify'});
+    if (
+      pifyDep ||
+      _.some(nodeModule, ({depString}) => setOfPifiedDepStrings.has(depString))
+    ) {
+      pifyStr = getDeclaration({depString: 'pify', varName: 'pify'}, 'only');
+    }
+
+    _.pull(nodeModule, pifyDep);
+  }
 
   return _.reject(
     [
@@ -193,7 +196,8 @@ function getImportSubSections(text) {
 
   const relative = _(allLines)
     .slice(nodeModule.length, allLines.length - rest.length)
-    .thru(toDependencyObjects);
+    .thru(toDependencyObjects)
+    .value();
 
   nodeModule = toDependencyObjects(nodeModule);
 
@@ -244,7 +248,7 @@ function handleNoImportSectionCase(oldText, declaration) {
   let result;
 
   if (_.startsWith(oldText, "'use")) {
-    const { index } = re.firstBlankLine.exec(oldText),
+    const {index} = re.firstBlankLine.exec(oldText),
       indexAfterBlankLine = index + 2;
 
     result =
@@ -261,7 +265,7 @@ function handleNoImportSectionCase(oldText, declaration) {
 }
 
 function getMethodToGetDeclaration() {
-  const getBody = ({ depString, varName }) => {
+  const getBody = ({depString, varName}) => {
       return setOfPifiedDepStrings.has(depString)
         ? `p${_.upperFirst(varName)} = pify(require('${depString}'))`
         : `${varName} = require('${depString}')`;
@@ -275,7 +279,7 @@ function getMethodToGetDeclaration() {
 
   return _.mapValues(
     {
-      import: ({ depString, varName }) =>
+      import: ({depString, varName}) =>
         `import ${varName} from '${depString}';`,
       require: (depObj, variant) => variantToRequire[variant](depObj)
     },
@@ -326,9 +330,9 @@ function getRegexes() {
   return {
     depString: /.*'(.*)'.*/,
     firstBlankLine: /\n\n/,
-    import: /^import [a-zA-Z_$][a-zA-Z0-9_$]* from '[./\\_$\-@a-zA-Z0-9]+';$/,
+    import: /^import [a-zA-Z_$][a-zA-Z0-9_$]* from '[./\\_$\-@a-zA-Z0-9]+';?$/,
     importSection: /(\n\/\/ Imports \/\/\n.*\n\n)([\s\S]*?)\n\n\/\/\n\/\/-+\/\/\n/,
-    require: /^(?:const| ) ([a-zA-Z_$][a-zA-Z0-9_$]*) = require\('([./\\_$\-@a-zA-Z0-9]+)'\)(?:,|;)$/,
+    require: /^(?:const| ) ([a-zA-Z_$][a-zA-Z0-9_$]*) = require\('([./\\_$\-@a-zA-Z0-9]+)'\)(?:,|;|)$/,
     varName: /^(?:import|const| ) ([a-zA-Z_$][a-zA-Z0-9_$]*) /
   };
 }
@@ -362,7 +366,7 @@ function isEmptyOrWhitespace(str) {
   return !str || /^\s*$/.test(str);
 }
 
-function lowerCaseVarName({ varName }) {
+function lowerCaseVarName({varName}) {
   return varName.toLowerCase();
 }
 
@@ -376,17 +380,30 @@ function getDepStringToVarName() {
 }
 
 function getSetOfConstructorDepStrings() {
-  return new Set(['koa', 'koa-router', 'vue']);
+  return new Set(['koa', 'koa-router', 'memory-fs', 'vue', 'vue-router']);
 }
 
 function getVarName(depString) {
   const custom = depStringToVarName[depString];
   if (custom) return custom;
 
-  if (setOfConstructorDepStrings.has(depString))
+  if (_.endsWith(depString, 'webpack-plugin'))
+    return _.flow(
+      replace(/webpack-plugin$/).with('plugin'),
+      _.camelCase,
+      _.upperFirst
+    )(depString);
+  else if (setOfConstructorDepStrings.has(depString))
     return _.flow(_.camelCase, _.upperFirst)(depString);
+  else return _.camelCase(path.basename(depString));
+}
 
-  return _.camelCase(path.basename(depString));
+function replace(strOrRegexToReplace) {
+  return {
+    with: replacementStr => {
+      return fullStr => _.replace(fullStr, strOrRegexToReplace, replacementStr);
+    }
+  };
 }
 
 //
