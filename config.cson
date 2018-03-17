@@ -27,6 +27,7 @@
     excludeVcsIgnoredPaths: false
     ignoredNames: [
       "node_modules"
+      "dev-modules"
     ]
     packagesWithKeymapsDisabled: [
       "ctrl-dir-scroll"
@@ -41,9 +42,6 @@
       "one-light-syntax"
     ]
   "ctrl-dir-scroll": {}
-  "dead-simple-light-syntax":
-    baseColor: "white"
-    scheme: "blue"
   editor:
     backUpBeforeSaving: true
     fontFamily: "Hack"
@@ -64,6 +62,7 @@
     userParameters: "-x"
   "linter-ui-default":
     gutterPosition: "Left"
+    panelHeight: 188
     showPanel: true
   pigments:
     autocompleteScopes: [
@@ -78,16 +77,16 @@
     formatOnSaveOptions:
       enabled: true
       excludedGlobs: [
-        "*.md"
         "package.json"
         "*node_modules*"
       ]
       isDisabledIfNoConfigFile: true
       isDisabledIfNotInPackageJson: true
+      respectEslintignore: false
     prettierEslintOptions: {}
     prettierOptions:
-      bracketSpacing: false
       singleQuote: true
+    useEditorConfig: false
   "save-autorun":
     notifications: false
   "save-commands":

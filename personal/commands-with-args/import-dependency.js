@@ -274,7 +274,7 @@ function getMethodToGetDeclaration() {
       only: depObj => `const ${getBody(depObj)};`,
       first: depObj => `const ${getBody(depObj)},`,
       middle: depObj => `  ${getBody(depObj)},`,
-      last: depObj => `  ${getBody(depObj)};`
+      last: depObj => `  ${getBody(depObj)}`
     };
 
   return _.mapValues(
@@ -375,7 +375,8 @@ function getDepStringToVarName() {
     lodash: '_',
     koa: 'Koa',
     'koa-router': 'KoaRouter',
-    vue: 'Vue'
+    vue: 'Vue',
+    'lru-cache': 'createLruCache'
   };
 }
 
