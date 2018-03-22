@@ -79,6 +79,7 @@
       excludedGlobs: [
         "package.json"
         "*node_modules*"
+        "*.md"
       ]
       isDisabledIfNoConfigFile: true
       isDisabledIfNotInPackageJson: true
