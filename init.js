@@ -7,17 +7,21 @@
 const fp = require('lodash/fp'),
   fs = require('fs'),
   path = require('path'),
+  prettier = require('prettier'),
   runCommandWithArgs = require('./personal/run-command-with-args')
+
+const { prettier: prettierConfig } = require('./package.json')
 
 //
 //------//
 // Init //
 //------//
 
-const type = getType(),
-  each = getEach(),
+const each = getEach(),
   docVariantToHeader = getDocVariantToHeader(),
-  fileExtensionToCommentString = getFileExtensionToCommentString()
+  fileExtensionToCommentString = getFileExtensionToCommentString(),
+  toExportLine = fp.flow(getDefaultNameAndFromFilename, __toExportLine),
+  toImportLine = fp.flow(getDefaultNameAndFromFilename, __toImportLine)
 
 //
 //------//
@@ -66,17 +70,48 @@ atom.commands.add(
 
     if (!fp.endsWith('/index.js')) return
 
-    const currentDirectory = path.dirname(filePath)
+    const currentDirectory = path.dirname(filePath),
+      supportedExtensions = new Set(['.js', '.mjs', '.vue'])
 
     const text = fp.flow(
-      fp.filter(fp.endsWith('.js')),
-      fp.pull('index.js'),
+      fp.filter(fp.flow(getExtension, ext => supportedExtensions.has(ext))),
+      fp.pullAll(['index.js', 'index.mjs']),
       fp.map(toExportLine),
       fp.invoke('sort'),
       fp.join('\n')
     )(fs.readdirSync(currentDirectory))
 
-    editor.setText(text)
+    editor.setText(prettier.format(text, prettierConfig))
+  }
+)
+
+atom.commands.add(
+  'atom-text-editor',
+  'personal:exportDefaultOfAllFilesInDirectory',
+  () => {
+    const editor = atom.workspace.getActiveTextEditor()
+
+    // validate
+    const buf = editor.getBuffer(),
+      filePath = fp.invoke('getPath', buf)
+
+    if (!fp.endsWith('/index.js')) return
+
+    const currentDirectory = path.dirname(filePath),
+      supportedExtensions = new Set(['.js', '.mjs', '.vue'])
+
+    const imports = fp.flow(
+      fp.filter(fp.flow(getExtension, ext => supportedExtensions.has(ext))),
+      fp.pull('index.js'),
+      fp.map(toImportLine),
+      fp.invoke('sort')
+    )(fs.readdirSync(currentDirectory))
+
+    const exports = fp.flow(fp.map(toDefaultName), toExportAllLine)(imports)
+
+    const text = imports.join('\n') + '\n\n' + exports + '\n'
+
+    editor.setText(prettier.format(text, prettierConfig))
   }
 )
 
@@ -91,14 +126,44 @@ each((header, variant) => {
 // Helper Fxns //
 //-------------//
 
-function toExportLine(filename) {
-  filename = removeDotJs(filename)
-  const defaultName = filenameToDefaultName(filename)
-  return `export { default as ${defaultName} } from './${filename}'`
+function toDefaultName(anImportLine) {
+  return /import ([a-zA-Z_$][a-zA-Z0-9_$]*) /.exec(anImportLine)[1]
 }
 
-function removeDotJs(filename) {
-  return filename.slice(0, -'.js'.length)
+function toExportAllLine(defaultNames) {
+  const defaultNamesString = defaultNames.join(', ')
+  return `export default { ${defaultNamesString} }`
+}
+
+function getDefaultNameAndFromFilename(filename) {
+  const extension = getExtension(filename),
+    extensionlessFilename = removeExtension(filename),
+    defaultName = filenameToDefaultName(extensionlessFilename)
+
+  const fromFilename =
+    extension === '.js' || extension === '.json'
+      ? extensionlessFilename
+      : filename
+
+  return { defaultName, fromFilename }
+}
+
+function __toExportLine({ defaultName, fromFilename }) {
+  return `export { default as ${defaultName} } from './${fromFilename}'`
+}
+
+function __toImportLine({ defaultName, fromFilename }) {
+  return `import ${defaultName} from './${fromFilename}'`
+}
+
+function getExtension(filename) {
+  const periodIndex = filename.lastIndexOf('.')
+  return filename.slice(periodIndex)
+}
+
+function removeExtension(filename) {
+  const periodIndex = filename.lastIndexOf('.')
+  return filename.slice(0, periodIndex)
 }
 
 function filenameToDefaultName(filename) {
@@ -167,13 +232,12 @@ function getCollectionTypeToEach() {
   }
 }
 
-function getType() {
-  return val =>
-    val === null
-      ? 'Null'
-      : val === undefined
-        ? 'Undefined'
-        : Object.prototype.toString.call(val).slice(8, -1)
+function type(val) {
+  if (val === null) return 'Null'
+
+  return val === undefined
+    ? 'Undefined'
+    : Object.prototype.toString.call(val).slice(8, -1)
 }
 
 function getEach() {

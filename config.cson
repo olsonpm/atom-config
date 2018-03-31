@@ -45,7 +45,7 @@
   editor:
     backUpBeforeSaving: true
     fontFamily: "Hack"
-    fontSize: 16
+    fontSize: 15
     invisibles: {}
   "exception-reporting":
     userId: "c34d39d1-3389-aac6-9341-3ae92ea11f63"
@@ -54,6 +54,16 @@
   "linter-eslint":
     disableFSCache: true
     globalNodePath: "/home/phil/.nvm/versions/node/v6.0.0"
+    scopes: [
+      "source.js"
+      "source.jsx"
+      "source.js.jsx"
+      "source.babel"
+      "source.js-semantic"
+      "text.html.vue"
+      "source.js.embedded.html"
+      "meta.import.js"
+    ]
   "linter-flow":
     executablePath: "./node_modules/.bin/flow"
   "linter-shellcheck":
@@ -62,7 +72,6 @@
     userParameters: "-x"
   "linter-ui-default":
     gutterPosition: "Left"
-    panelHeight: 188
     showPanel: true
   pigments:
     autocompleteScopes: [
