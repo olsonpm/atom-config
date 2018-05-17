@@ -136,14 +136,8 @@ function toExportAllLine(defaultNames) {
 }
 
 function getDefaultNameAndFromFilename(filename) {
-  const extension = getExtension(filename),
-    extensionlessFilename = removeExtension(filename),
-    defaultName = filenameToDefaultName(extensionlessFilename)
-
-  const fromFilename =
-    extension === '.js' || extension === '.json'
-      ? extensionlessFilename
-      : filename
+  const fromFilename = removeExtension(filename),
+    defaultName = filenameToDefaultName(fromFilename)
 
   return { defaultName, fromFilename }
 }
@@ -264,6 +258,7 @@ function getFileExtensionToCommentString() {
     scss: '//',
     lua: '--',
     sql: '--',
+    vue: '//',
   }
 }
 
