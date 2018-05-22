@@ -189,10 +189,10 @@ function doc(str, variant) {
     throw new Error('Unable to discern the file extension')
   }
 
-  const hasPrecedingCommentLineForSpacing =
-    (fileExt === 'js' || fileExt === 'mjs') && variant !== 'import'
+  const commentStr = fileExtensionToCommentString[fileExt],
+    hasPrecedingCommentLineForSpacing =
+      commentStr === '//' && variant !== 'import'
 
-  const commentStr = fileExtensionToCommentString[fileExt]
   if (!commentStr) {
     throw new Error(
       "Unable to document current file - extension '" +
