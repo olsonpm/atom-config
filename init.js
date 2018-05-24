@@ -39,12 +39,17 @@ atom.commands.add('atom-text-editor', 'personal:doc-curline', () => {
   editor.moveUp(1)
 })
 
-atom.commands.add('atom-text-editor', 'personal:toKebabCase', () => {
-  const editor = atom.workspace.getActiveTextEditor(),
-    selected = editor.getSelectedText()
+atom.commands.add(
+  'atom-text-editor',
+  'personal:toKebabCase',
+  createToCase('kebab')
+)
 
-  editor.insertText(fp.kebabCase(selected))
-})
+atom.commands.add(
+  'atom-text-editor',
+  'personal:toCamelCase',
+  createToCase('camel')
+)
 
 atom.commands.add('atom-text-editor', 'personal:sortSelectedLines', () => {
   const editor = atom.workspace.getActiveTextEditor()
@@ -265,4 +270,13 @@ function getFileExtensionToCommentString() {
 function getFromHashBang(editor) {
   const firstLine = editor.lineTextForBufferRow(0)
   return firstLine.match(/^#!.*(|ba|z)sh$/) ? 'sh' : ''
+}
+
+function createToCase(id) {
+  return () => {
+    const editor = atom.workspace.getActiveTextEditor(),
+      selected = editor.getSelectedText()
+
+    editor.insertText(fp[`${id}Case`](selected))
+  }
 }
