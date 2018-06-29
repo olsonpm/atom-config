@@ -4,7 +4,8 @@
 // Imports //
 //---------//
 
-const fp = require('lodash/fp'),
+const dedent = require('dedent'),
+  fp = require('lodash/fp'),
   fs = require('fs'),
   path = require('path'),
   prettier = require('prettier'),
@@ -20,7 +21,6 @@ const { prettier: prettierConfig } = require('./package.json')
 const each = getEach(),
   docVariantToHeader = getDocVariantToHeader(),
   fileExtensionToCommentString = getFileExtensionToCommentString(),
-  toExportLine = fp.flow(getDefaultNameAndFromFilename, __toExportLine),
   toImportLine = fp.flow(getDefaultNameAndFromFilename, __toImportLine)
 
 //
@@ -65,7 +65,7 @@ atom.commands.add('atom-text-editor', 'personal:sortSelectedLines', () => {
 
 atom.commands.add(
   'atom-text-editor',
-  'personal:reExportDirectoryOfDefaults',
+  'personal:exportNamedOfAllFilesInDirectory',
   () => {
     const editor = atom.workspace.getActiveTextEditor()
 
@@ -76,15 +76,18 @@ atom.commands.add(
     if (!fp.endsWith('/index.js')) return
 
     const currentDirectory = path.dirname(filePath),
-      supportedExtensions = new Set(['.js', '.mjs', '.vue'])
+      supportedExtensions = new Set(['.js', '.vue'])
 
-    const text = fp.flow(
+    const imports = fp.flow(
       fp.filter(fp.flow(getExtension, ext => supportedExtensions.has(ext))),
-      fp.pullAll(['index.js', 'index.mjs']),
-      fp.map(toExportLine),
-      fp.invoke('sort'),
-      fp.join('\n')
+      fp.pull('index.js'),
+      fp.map(toImportLine),
+      fp.invoke('sort')
     )(fs.readdirSync(currentDirectory))
+
+    const exports = fp.flow(fp.map(toDefaultName), toExportNamedAllLine)(imports)
+
+    const text = imports.join('\n') + '\n\n' + exports + '\n'
 
     editor.setText(prettier.format(text, prettierConfig))
   }
@@ -103,7 +106,7 @@ atom.commands.add(
     if (!fp.endsWith('/index.js')) return
 
     const currentDirectory = path.dirname(filePath),
-      supportedExtensions = new Set(['.js', '.mjs', '.vue'])
+      supportedExtensions = new Set(['.js', '.vue'])
 
     const imports = fp.flow(
       fp.filter(fp.flow(getExtension, ext => supportedExtensions.has(ext))),
@@ -112,7 +115,7 @@ atom.commands.add(
       fp.invoke('sort')
     )(fs.readdirSync(currentDirectory))
 
-    const exports = fp.flow(fp.map(toDefaultName), toExportAllLine)(imports)
+    const exports = fp.flow(fp.map(toDefaultName), toExportDefaultAllLine)(imports)
 
     const text = imports.join('\n') + '\n\n' + exports + '\n'
 
@@ -135,9 +138,22 @@ function toDefaultName(anImportLine) {
   return /import ([a-zA-Z_$][a-zA-Z0-9_$]*) /.exec(anImportLine)[1]
 }
 
-function toExportAllLine(defaultNames) {
-  const defaultNamesString = defaultNames.join(', ')
-  return `export default { ${defaultNamesString} }`
+function toExportNamedAllLine(defaultNames) {
+  const defaultNamesString = defaultNames.join(',\n  ') + ','
+  return dedent(`
+    export {
+      ${defaultNamesString}
+    }
+  `)
+}
+
+function toExportDefaultAllLine(defaultNames) {
+  const defaultNamesString = defaultNames.join(',\n  ') + ','
+  return dedent(`
+    export default {
+      ${defaultNamesString}
+    }
+  `)
 }
 
 function getDefaultNameAndFromFilename(filename) {
@@ -145,10 +161,6 @@ function getDefaultNameAndFromFilename(filename) {
     defaultName = filenameToDefaultName(fromFilename)
 
   return { defaultName, fromFilename }
-}
-
-function __toExportLine({ defaultName, fromFilename }) {
-  return `export { default as ${defaultName} } from './${fromFilename}'`
 }
 
 function __toImportLine({ defaultName, fromFilename }) {
@@ -258,7 +270,6 @@ function getDocVariantToHeader() {
 function getFileExtensionToCommentString() {
   return {
     sh: '#',
-    mjs: '//',
     js: '//',
     scss: '//',
     lua: '--',

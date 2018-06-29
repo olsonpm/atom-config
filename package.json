@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/olsonpm/atom-config#readme",
   "dependencies": {
+    "dedent": "^0.7.0",
     "lodash": "^4.17.4",
     "prettier": "^1.11.1",
     "text-buffer": "^13.9.3"
