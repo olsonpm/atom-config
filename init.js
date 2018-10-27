@@ -224,11 +224,17 @@ function doc(str, variant) {
     precedingCommentStr = hasPrecedingCommentLineForSpacing
       ? commentStr + '\n'
       : '',
-    border = commentStr + fp.repeat(textLength + 2, '-') + commentStr + '\n',
+    border = getBorder(commentStr, fileExt, textLength),
     out = `${precedingCommentStr}${border}${commentStr} ${str} ${commentStr}\n${border}\n`
 
   editor.deleteLine()
   editor.insertText(out)
+}
+
+function getBorder(commentStr, fileExt, textLength) {
+  return fileExt === 'py'
+    ? `${commentStr} ${fp.repeat(textLength, '-')} ${commentStr}\n`
+    : `${commentStr}${fp.repeat(textLength + 2, '-')}${commentStr}\n`
 }
 
 function getCollectionTypeToEach() {
@@ -270,6 +276,7 @@ function getDocVariantToHeader() {
 function getFileExtensionToCommentString() {
   return {
     sh: '#',
+    py: '#',
     js: '//',
     scss: '//',
     lua: '--',

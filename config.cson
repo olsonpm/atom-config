@@ -3,12 +3,14 @@
     general:
       _analyticsUserId: "341af4ba-5046-42fa-a28a-7d3011575b2b"
     html:
-      beautify_on_save: true
       end_with_newline: true
     js:
       disabled: true
     lua:
       beautify_on_save: true
+    python:
+      beautify_on_save: true
+      disabled: true
   "autocomplete-plus":
     enableAutoActivation: false
     includeCompletionsFromAllBuffers: false
@@ -36,6 +38,7 @@
       "save-autorun"
       "hard-wrap"
       "merge-conflicts"
+      "python-black"
     ]
     telemetryConsent: "no"
     themes: [
@@ -44,14 +47,16 @@
     ]
   "ctrl-dir-scroll": {}
   editor:
+    autoIndentOnPaste: false
     backUpBeforeSaving: true
     fontFamily: "Hack"
-    fontSize: 15
     invisibles: {}
   "exception-reporting":
     userId: "c34d39d1-3389-aac6-9341-3ae92ea11f63"
   "isotope-light-ui":
     minimalMode: true
+  linter:
+    lintOnChange: false
   "linter-eslint":
     disableFSCache: true
     globalNodePath: "/home/phil/.nvm/versions/node/v6.0.0"
@@ -65,8 +70,15 @@
       "source.js.embedded.html"
       "meta.import.js"
     ]
+  "linter-flake8":
+    ignoreErrorCodes: [
+      "E722"
+    ]
+    maxLineLength: 80
   "linter-flow":
     executablePath: "./node_modules/.bin/flow"
+  "linter-pylint":
+    rcFile: "%p/.pylintrc"
   "linter-shellcheck":
     enableNotice: true
     shellcheckExecutablePath: "/usr/bin/shellcheck"
@@ -98,6 +110,8 @@
     prettierOptions:
       singleQuote: true
     useEditorConfig: false
+  "python-black":
+    lineLength: 79
   "save-autorun":
     notifications: false
   "save-commands":
